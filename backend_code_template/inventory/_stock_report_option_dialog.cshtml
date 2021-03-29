@@ -1,0 +1,104 @@
+﻿@using asom.apps.Effectiv.core.model.authentication
+@using asom.apps.Effectiv.core.model.org
+@using asom.apps.web.Effectv.Models.Settings
+
+@{
+  bool hasAdminAccess = new IdentityStore().HasAuthority(AppPermissions.SYS_CORE_ADMIN);
+  IEnumerable<BusinessChannelModel> chls  =  new List<BusinessChannelModel>();
+  if (hasAdminAccess)
+  {
+      // get other channels
+    var channelCrud =
+      BusinessChannelModel.FindChannel(new BusinessChannelCriteria() {ExcludeHeadOffice = true});
+    if (channelCrud.Success)
+    {
+      chls = (IEnumerable<BusinessChannelModel>) channelCrud.Data;
+    }
+
+  }
+
+}
+
+
+<div class="bg-white">
+<asom-loading-bar processing="loading"></asom-loading-bar>
+  <div class="pad20 text-left">
+    <div class="text-uppercase font-size-18 pad10 text-center bold divider">Inventory Stock Report Option</div>
+
+    </div>
+<div class="row text-left">
+
+  <div class="col-sm-6 ">
+    <div class="pad10 margin-t-10 " ng-class="{'bg-highlight-blue'  : opt=='1'}">
+      <label for="chk890" class="bold font-size-14">Print All Inventory Stock</label>
+      <input id="chk890" type="radio" name="query" value="1"  ng-model="opt"><br>
+      <span class="font-size-12 text-muted">Select this Option if you want to Generate Stock Count Report for all Inventories </span>
+
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="pad10 margin-t-10 " ng-class="{'bg-highlight-blue'  : opt=='2'}">
+      <label for="chk8901" class="bold font-size-14">Print Only Inventories with Stock</label>
+      <input id="chk8901" type="radio" name="query" value="2"   ng-model="opt"><br>
+      <span class="font-size-12 text-muted">Select this Option if you want to Generate Stock Count Report for Inventories with Stock </span>
+    </div>
+
+  </div>
+
+
+</div>
+
+  <div class="row text-left">
+
+    <div class="col-sm-6 ">
+      <div class="pad10 margin-t-10 " ng-class="{'bg-highlight-blue'  : opt=='3'}">
+        <label for="chk8902" class="bold font-size-14">Print Inventories without Stock</label>
+        <input id="chk8902" type="radio" name="query" value="3"   ng-model="opt"><br>
+        <span class="font-size-12 text-muted">Select this Option if you want to Generate Report for all Inventories with no Stock. <span
+          class="theme-caption-color font-size-13 bold">Note :</span> Items that has no initial Stock will be neglected </span>
+      </div>
+    </div>
+    <div class="col-sm-6">
+
+      <div class="pad10">
+        <p class="pad10 bold">Business Channel Options &nbsp; &nbsp; <i class="ion-ios-printer font-size-20 color-blue"></i></p>
+        @if (hasAdminAccess)
+        {
+        <div class="pad10">
+          <span> Select a Channel</span>
+          <select class="ui-input w60" ng-model="channelId">
+            <option value="" selected>Current Channel</option>
+            @foreach (var b in chls)
+            {
+            <option value="@b.Id">@b.Id</option>
+            }
+
+
+
+          </select>
+        </div>
+
+
+        }
+      </div>
+
+    </div>
+
+
+  </div>
+
+<div class="pad20 ">
+  <div class="">
+
+    <a href="" ng-click="createReport(2)" class="ui-button pad10 cursor-pointer margin-20 font-size-15"><i class="ion-social-wordpress color-red  font-size-26"></i>  Ms Word</a>
+
+    <a href="" ng-click="createReport(1)"
+    class="ui-button pad10 cursor-pointer margin-20 font-size-15"><i class="ion-document color-green font-size-26"></i>   Pdf</a>
+    <a href="" ng-click="createReport(3)"
+    class="ui-button pad10 cursor-pointer margin-20 font-size-15"><i class="ion-android-archive color-orange font-size-26"></i>   Ms Excel</a>
+  </div>
+
+</div>
+
+  </div>
+

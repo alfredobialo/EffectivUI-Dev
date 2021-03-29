@@ -1,0 +1,47 @@
+﻿<div class="dialog-ui">
+    <div class="modal-header bg-success text-left">
+
+      <div class="pad10">
+        <div class="row">
+          <div class="col-sm-7">
+            <div ng-if="item.isEditMode" class="display-inine-block">
+              <button class="ui-button ui-button-primary ui-button-sm" ng-click="createNewItem()"
+                      ng-disabled="loading">
+                <span ng-if="uiMode.isDisabled">{{uiMode.editButtonText}}</span>
+                <span ng-if="!uiMode.isDisabled">Update Changes</span>
+              </button>
+              <button class="ui-button ui-button-default ui-button-sm" ng-hide="uiMode.isDisabled"
+                      ng-click="cancelEditMode()"
+                      ng-disabled="loading">
+                <i class="ion-android-create"></i> Cancel
+              </button>
+            </div>
+            <button ng-if="item.isEditMode" class="ui-button ui-button-danger ui-button-sm"
+                    ng-show="uiMode.isDisabled"
+                    ng-click="openDeleteDialog()">
+              <i class="ion-ios-trash"></i> &nbsp; Delete
+
+            </button>
+
+            <span class="font-size-18 text-left pad15">
+            {{item.name}}
+      </span>
+          </div>
+          <div class="col-sm-5 text-right">
+
+
+            <button class="ui-button ui-button-danger ui-button-sm" title="close" ng-click="closeDialog()">X</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-body text-left max-height-600 min-h400 overflow-auto">
+        @Html.Partial("ui/_partials/inventory/_item_ui_page")
+    </div>
+    <div class="bg-accent-color pad10 text-center">
+        <span class="color-white">You can only Edit / Delete item/Services here. You can also Add Sub items ie: Storage Types</span>
+    </div>
+
+</div>

@@ -1,0 +1,91 @@
+﻿@using asom.apps.Effectiv.core.model.authentication
+@using asom.apps.Effectiv.core.model.org
+@{
+    var appSetting = OrganizationInfo.GetSettings();
+    var id = new IdentityStore();
+    bool
+        canEditCost = id.HasAuthority(AppPermissions.INVENTORY_UI_EDIT_ITEM_COST);
+
+
+}
+
+<div class="pad10">
+
+  <table class="table font-size-12">
+
+    <tr ng-repeat="s in item.storageType"  class="">
+      <td class="w85 rpt-bg-color-fade shadow">
+                <span class="font-size-18 theme-caption-color">
+                    {{s.description}}  <span class="font-size-12" ng-show="s.loadingHistory"> @Html.Partial("ui/_loading_img_partial")</span>
+               </span>
+        <asom-data-pager pager-source="s.criteria"
+                         on-page-click="goPage(index, s)"
+                         show-as-page-numbers="true"
+        ></asom-data-pager>
+            <span class="pull-right">
+               <a href=""
+                  ng-hide=""
+                  ng-click="viewHistory(s)"
+                  class="link-button-default">
+          <i class="ion-refresh"></i>
+        </a>
+            </span>
+        <div class="min-h300 max-height-400 overflow-auto pad15">
+          <table class="table table-bordered ">
+            <tr class ="font-size-11">
+              <th class="w10">Date</th>
+              <th class="w40">Description</th>
+              <th class="w10">Prev</th>
+              <th class="w15">Units IN</th>
+              <th class="w15">Unit OUT</th>
+
+            </tr>
+
+            <tr ng-repeat="log in s.stockHistoryList">
+              <td>{{log.date|date:'MMM-dd, yyyy'}}</td>
+              <td>
+
+                {{log.description}}
+                <br />
+                <span ng-class="{'color-red'  : log.mainUnitsOut<0, 'color-green'  : log.mainUnitsIn>0}" class="bold font-size-10">{{log.note}}</span>
+                <span ng-if="!log.isSalesTransaction" class="pull-right">
+                      <span  class="theme-caption-color">By User :{{log.createdBy}}</span>
+                  </span>
+                <span ng-if="log.isSalesTransaction" class="pull-right">
+                      <a href="" class=""> <asom-sales-order-dialog data="{salesOrder: log.transactionId}" title="View Trans : {{log.transactionId}}"></asom-sales-order-dialog></a>
+                  </span>
+              </td>
+              <td>{{log.prevQty|number}}</td>
+
+              <td>{{log.unitsIn}} <span ng-if="log.mainUnitsIn>0" class="pull-right bold color-green font-size-16"><i class="ion-arrow-up-c"></i></span></td>
+              <td>{{log.unitsOut}} <span ng-if="log.mainUnitsOut<0" class="pull-right bold color-red font-size-16"><i class="ion-arrow-down-c"></i></span></td>
+
+            </tr>
+
+
+            <tr class="double-underline">
+              <td colspan="3" >
+                <span class="bold">STOCK BALANCES  </span>
+              </td>
+              <td class="bold ">{{::s.stockSummary.totalUnitIn|number}} {{::s.unitOfMeasure}}</td>
+              <td class="bold ">{{::s.stockSummary.totalUnitOut|number}} {{::s.unitOfMeasure}}</td>
+
+            </tr>
+            <tr class="double-underline bg-highlight">
+              <td colspan="2" >
+                <span>Net Unit On Hand</span>
+              </td>
+              <td class="bold text-center font-size-15" colspan="4">{{::s.stockSummary.unitInStock|number}} {{::s.unitOfMeasure}}</td>
+
+            </tr>
+
+          </table>
+        </div>
+
+      </td>
+
+
+    </tr>
+  </table>
+
+</div>

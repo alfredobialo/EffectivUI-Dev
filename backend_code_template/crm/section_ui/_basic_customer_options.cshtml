@@ -1,0 +1,115 @@
+﻿@using asom.apps.Effectiv.core.model.authentication
+@{
+    var id = new IdentityStore();
+    bool hasCreditLimitRight = id.HasAuthority(AppPermissions.CRM_UI_EDIT_CREDIT_LIMIT),
+        hasPriceLevelRight = id.HasAuthority(AppPermissions.CRM_UI_EDIT_PRICE_LEVEL)
+        /*editDoc = id.HasAuthority(AppPermissions.CRM_EDIT_DOCUMENTS), */;
+
+
+        ;
+}
+<div class="row font-size-11">
+    <div class="col-sm-4 text-uppercase">
+        <div class="pad5">
+            <label for="chkActiveProfile">
+                <input id="chkActiveProfile"
+                       ng-model="currentCustomer.isActive"
+                       ng-disabled ="uiMode.isDisabled"
+                       type="checkbox" checked> &nbsp;&nbsp;&nbsp; Profile Is Active
+            </label>
+        </div>
+        <div class="pad5">
+            <label for="chkUseAccForTrans"> @if (hasCreditLimitRight)
+              {
+              <span>
+                <input id="chkUseAccForTrans"
+                       ng-model="currentCustomer.alwaysRequestCompletePayment"
+                       ng-disabled ="uiMode.isDisabled"
+                       type="checkbox"> &nbsp;&nbsp;&nbsp;Request Complete Payment
+              </span>
+
+              }
+              else{
+              <span> Request Complete Payment &nbsp;&nbsp;&nbsp;{{currentCustomer.alwaysRequestCompletePayment? 'YES' : 'NO'}}</span>
+              }
+            </label>
+        </div>
+        <div class="pad5">
+            <label for="chkCreditWorthy">
+                @if (hasCreditLimitRight)
+                {
+                    <span>
+                        <input id="chkCreditWorthy"
+                               ng-disabled="uiMode.isDisabled"
+                               ng-model="currentCustomer.isCreditWorthy"
+                               type="checkbox"> &nbsp;&nbsp;&nbsp; Is Credit Worthy
+                    </span>
+                }
+                else
+                {
+                    <span> Is Credit Worthy &nbsp;&nbsp;&nbsp;{{currentCustomer.isCreditWorthy? 'YES' : 'NO'}}</span>
+                }
+
+            </label>
+        </div>
+        <div class="pad5">
+            <div class="row">
+                <div class="col-sm-5 ">
+                    <label for="txtCreditLimit">Credit Limit </label>
+                </div>
+                <div class="col-sm-7">
+                    @if (hasCreditLimitRight)
+                    {
+                        <input type="text" placeholder="0.00"
+                               maxlength="14"
+                               ng-model="currentCustomer.creditLimit"
+                               ng-disabled="uiMode.isDisabled"
+                               class="ui-input ui-input-bordered" name="txtCreditLimit" id="txtCreditLimit">
+                    }
+                    else
+                    {
+                        <span >{{currentCustomer.creditLimit | money}}</span>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+        <div class="pad10">
+            <div class="row">
+                <div class="col-sm-5 ">
+                    <label for="cboPriceLevel">Price Level </label>
+                </div>
+                <div class="col-sm-7">
+                    @if (hasPriceLevelRight)
+                    {
+                        <select name="cboPriceLevel" id="cboPriceLevel"
+                                ng-model="currentCustomer.priceLevel"
+                                ng-disabled="uiMode.isDisabled"
+                                class="ui-input ui-input-bordered" ng-options="pl for pl in priceLevels"></select>
+                    }
+                    else
+                    {
+                        <span>{{currentCustomer.priceLevel}}</span>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="col-sm-8 border-left">
+        <div class="pad10 min-h250 text-uppercase">
+            <div class="pad5">
+                <span class="font-size-15">Note</span>
+                <textarea name="txtNote" id="txtNote"
+                          rows="4" placeholder="Drop a Note on the Customer Profile"
+                          ng-disabled ="uiMode.isDisabled"
+                          ng-model="currentCustomer.memo" class="ui-input ui-input-bordered"></textarea>
+            </div>
+
+
+        </div>
+    </div>
+</div>

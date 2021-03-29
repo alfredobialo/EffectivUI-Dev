@@ -1,0 +1,195 @@
+﻿@using asom.apps.Effectiv.core.model.org
+@using asom.apps.web.Effectv.Models
+@using asom.apps.web.Effectv.Util
+@{
+    var appSettings = OrganizationInfo.GetSettings();
+}
+<div class="pad20 min-h300">
+    <div class="row">
+
+        <form name="frmCustomer" novalidate>
+            <div class="col-sm-9">
+
+                <div class="row text-uppercase">
+
+                    <div class="col-sm-9 col-sm-push-3">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="pad10">
+                                    <label for="cprofile" class="control-label">
+                                        <input type="radio" name="customerProfile"
+                                               ng-checked="currentCustomer.isCompany"
+                                               ng-click="currentCustomer.isCompany=true"
+                                               ng-disabled ="uiMode.isDisabled"
+                                               id="cprofile" class="font-size-18"> &nbsp;&nbsp;&nbsp; Company Profile
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="pad10">
+
+                                    <label for="cindividual" class="control-label"><input checked
+                                          ng-click="currentCustomer.isCompany=false"
+                                          @*                                                                                          ng-model="currentCustomer.isCompany"*@
+                                          type="radio" id="cindividual"
+                                          name="customerProfile"
+                                          ng-disabled ="uiMode.isDisabled"
+                                          class="font-size-18"> &nbsp;&nbsp;&nbsp; Individual Profile</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row ">
+                    <div class="col-sm-3 text-uppercase pad10-l-r text-left">
+                        <span class=" ">Name</span>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text"
+                              focus-input
+                               name="txtName"
+                               required
+                               placeholder="{{currentCustomer.isCompany ? 'Company Name...' : '@appSettings.CustomerLabel'}}"
+                               maxlength="200"
+                               ng-model="currentCustomer.name"
+                               ng-disabled="uiMode.isDisabled"
+                               ng-class="{'ui-invalid-field' : frmCustomer.$dirty && frmCustomer.txtName.$dirty && frmCustomer.txtName.$invalid }"
+                               class="ui-input ui-required font-size-28">
+                        <ng-messages for="frmCustomer.txtName.$error" ng-if="frmCustomer.txtName.$dirty">
+                            <ng-message when="required" class="color-red">Company Name or Personal Name for this customer is required</ng-message>
+
+                        </ng-messages>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 text-uppercase pad10-l-r text-left">
+                        <span class="" tooltip="Leave this field empty if you want auto generated code">@appSettings.CustomerLabel Code</span>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text"
+                               maxlength="50"
+                               placeholder="Auto Generate..."
+                               ng-model="currentCustomer.id"
+                               ng-disabled ="uiMode.isDisabled || currentCustomer.isEditMode"
+                               class="ui-input ">
+                    </div>
+
+                </div>
+                <!--Contact Address Field-->
+                <div class="row">
+                    <div class="col-sm-3 text-uppercase pad10-l-r text-left">
+                        <span class=" ">Contact Address</span>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <input type="text"
+                                       name="txtAddr"
+                                       ng-model="currentCustomer.address"
+                                       placeholder="Office / Contact Address"
+                                        ng-disabled ="uiMode.isDisabled"
+                                       class="ui-input ">
+                            </div>
+                            <div class="col-sm-4">
+
+                              <asom-location-helper location="currentCustomer.location"
+                                                    disable ="uiMode.isDisabled" ></asom-location-helper>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 text-uppercase pad10-l-r text-left">
+                        <span class=" "></span>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <input type="url"
+                                       ng-class="{'ui-invalid-field' : frmCustomer.$dirty && frmCustomer.txtWebAddr.$invalid}"
+                                       name="txtWebAddr"
+                                       maxlength="150"
+                                       ng-model="currentCustomer.webAddress"
+                                        ng-disabled ="uiMode.isDisabled"
+                                       placeholder="Website Address eg: http://www.asomservices.com"
+                                       class="ui-input ">
+
+                            </div>
+                            <div class="col-sm-5">
+                                <input type="email"
+                                       name="txtEmail"
+                                       maxlength="150"
+                                       placeholder="Email Address"
+                                       ng-model="currentCustomer.emailAddress"
+                                        ng-disabled ="uiMode.isDisabled"
+                                       class="ui-input "
+                                       />
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 text-uppercase pad10-l-r text-left">
+                        <span class=" ">Phone Number</span>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text"
+                               ng-model="currentCustomer.phoneNumber"
+                                ng-disabled ="uiMode.isDisabled"
+                               placeholder="Mobile / Office Number"
+                                class="ui-input ">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 text-uppercase pad10-l-r text-left">
+                        <span class=" ">Customer Type</span>
+                    </div>
+                    <div class="col-sm-9">
+                        <select placeholder="Supplier / Buyer"
+                                 ng-disabled ="uiMode.isDisabled || dialogDisable"
+
+                                ng-options ="t.value for t in type "
+                                ng-model="currentCustomer.type" class="ui-input ">
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="col-sm-3">
+            <div class="pad20 margin-t-10">
+                <div class="" ng-show="showUpload">
+
+                    <div class="">
+                        <div class="normal-img-style small" style="background-image: url('@AppInfo.Get.DefaultAvarter()')"
+                             ng-style="passport">
+
+                        </div>
+
+                        <div class=" pad10 " ng-hide="uiMode.isDisabled">
+                            <asom-file-upload class="ui-button-primary ui-button ui-button-xs "
+                                              file-change="uploadPicture(obj,1)"
+                                              upload-url="@Url.Action("UploadFileToServer", "Home",
+                                                              new {directoryPath = "crm\\pictures", allowedExtensions = AllowedExtensionsConstant.IMAGE_FILE_EXTENSION})"
+                                              upload-text="Select Picture"></asom-file-upload>
+                        </div>
+                        <div class=" margin-t-30" ng-show="currentCustomer.contacts.length > 0">
+                            <p class="font-size-14"> Has {{currentCustomer.contacts.length}} Contact(s) Available</p>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

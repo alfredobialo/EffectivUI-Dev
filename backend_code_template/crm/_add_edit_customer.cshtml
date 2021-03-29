@@ -1,0 +1,87 @@
+﻿
+
+<div class=" bg-success" asom-toolbar offset-to-element-id="app-main-menu">
+    <div class="pad10">
+        <p class=" font-size-14 10" >
+            <span class="font-size-14" ng-hide="currentCustomer.isEditMode">Create New Customer <span ng-show="!!currentCustomer.id">/File No:/{{currentCustomer.id}}</span></span>
+            <span  ng-show="currentCustomer.isEditMode"><a ui-sref="^.customer-list-state" class="color-white-forced"> <i class="ion-chevron-left"> </i> CUSTOMER LIST </a>/ File No :/{{currentCustomer.id}} ({{currentCustomer.name}}) &nbsp;<a  ng-click="reloadCustomer()" href=""><i class="ion-refresh font-size-18 color-white"></i></a></span>
+        </p>
+
+    </div>
+    <div class="bg-white-gradient pad10">
+        <div class="row">
+            <div class="col-sm-7">
+
+                <div ng-if="currentCustomer.isEditMode" class="anim-if animated">
+                    <button class="ui-button ui-button-primary ui-button-xs"
+                            ng-click="saveCustomer()"
+                            ng-disabled="loading || frmCustomer.$invalid">
+                        <span ng-if="uiMode.isDisabled">{{uiMode.editableText}}</span>
+                        <span ng-if="!uiMode.isDisabled">Update Changes</span>
+
+                    </button>
+
+                    <button class="ui-button ui-button-default ui-button-xs" ng-hide="uiMode.isDisabled"
+                            ng-click="cancelEdit()"
+                            ng-disabled="loading">
+                        <i class="ion-android-create"></i> Cancel
+                    </button>
+                  <!--<button-->
+
+                  <!--class="ui-button ui-button-xs ui-button-primary"-->
+                  <!--&gt;-->
+                  &nbsp;<asom-sales-order-dialog title="New Sales" ng-show="currentCustomer.isActive" data=" {customerId  : currentCustomer.id}" class="ui-button bg-accent-color ui-button-xs"></asom-sales-order-dialog>
+
+
+                  <!--</button>-->
+                </div>
+                <div ng-if="!currentCustomer.isEditMode" class="anim-if animated">
+                    <button class="ui-button ui-button-primary ui-button-xs"
+                            ng-click="saveCustomer()"
+                            ng-disabled="loading || frmCustomer.$invalid">
+                        Save Customer
+                    </button>
+                </div>
+
+
+            </div>
+            <div class="col-sm-5">
+
+                <div ng-if="currentCustomer.isEditMode" class="text-right anim-if animated">
+                    <button class="ui-button ui-button-primary ui-button-xs"
+                            ng-show="uiMode.isDisabled"
+                            ng-click="resetForm()">
+                        <i class="ion-plus"></i> &nbsp; New Customer
+                    </button>
+                    <button class="ui-button ui-button-danger ui-button-xs"
+                            ng-show="uiMode.isDisabled"
+                            ng-click="deleteCustomer()">
+                        <i class="ion-ios-trash"></i> &nbsp; Delete
+
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+    <md-progress-linear ng-show="loading" md-mode="indeterminate"></md-progress-linear>
+</div>
+<div class=" margin-t-10 text-left">
+
+  <div class=" pad30 centralize w90 ">
+    <div class="bg-white border-radius shadow margin-b-10 text-left" ng-class="{'bg-highlight-red' : !currentCustomer.isActive}">
+      <div class="container-decor bg-primary"></div>
+        <div class="pad15 bg-white font-size-26 text-center shadow-stronger bold" ng-hide="currentCustomer.isActive">
+            This Account is Not Active!
+        </div>
+      @Html.Partial("ui/_partials/crm/section_ui/_customer_profile_ui")
+      @Html.Partial("ui/_partials/crm/section_ui/_customer_profile_tab_ui")
+    </div>
+  </div>
+
+
+</div>
+

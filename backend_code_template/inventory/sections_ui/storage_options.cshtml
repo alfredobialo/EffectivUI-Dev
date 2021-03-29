@@ -1,0 +1,317 @@
+﻿@using asom.apps.Effectiv.core.model.authentication
+@using asom.apps.Effectiv.core.model.org
+@{
+  var appSetting = OrganizationInfo.GetSettings();
+  var id = new IdentityStore();
+  bool canEditCountable = id.HasAuthority(AppPermissions.INVENTORY_UI_EDIT_ITEM_QTY_DEDUCTION_OPTION),
+    canEditDiscountOpt = id.HasAuthority(AppPermissions.INVENTORY_UI_EDIT_ITEM_DISCOUNT_OPTION),
+    canIsTaxableOpt = id.HasAuthority(AppPermissions.INVENTORY_UI_EDIT_ITEM_TAX_OPTION),
+    canEditIsActiveOpt = id.HasAuthority(AppPermissions.INVENTORY_UI_MANAGE_ACTIVE_OPTION),
+    canEditIsSaleOpt = id.HasAuthority(AppPermissions.INVENTORY_UI_EDIT_ITEM_FORSALE_OPTION),
+    canEditStockable = id.HasAuthority(AppPermissions.INVENTORY_UI_EDIT_ITEM_STOCKABLE_OPTION),
+    canEditIsBought = id.HasAuthority(AppPermissions.INVENTORY_UI_EDIT_ITEM_ISBOUGHT_OPTION),
+    canEditCost = id.HasAuthority(AppPermissions.INVENTORY_UI_EDIT_ITEM_COST),
+    canEditPrice = id.HasAuthority(AppPermissions.INVENTORY_UI_EDIT_ITEM_PRICE);
+
+
+
+}
+<div class="row">
+<div class="col-sm-2">
+
+  <p class="font-size-14">Basic Options</p>
+  <div class="pad10 text-uppercase font-size-11">
+    <label for="isActive" uib-tooltip="Enable or Disable this Item">
+      @if (canEditIsActiveOpt)
+      {
+        <input type="checkbox" id="isActive"
+               ng-disabled="uiMode.isDisabled"
+               ng-model="item.isActive">
+      }
+      else
+      {
+        <span ng-class="{'ion-checkmark-round' : item.isActive, 'ion-android-cancel'  : !item.isActive}" class=" font-size-18"></span>
+      }
+      &nbsp; &nbsp;<span>Is Active</span>
+    </label><br />
+    <label for="option1" uib-tooltip="Automatically deduct the quantity when sold">
+
+      @if (canEditCountable)
+      {
+        <input type="checkbox" id="option1"
+               ng-disabled="uiMode.isDisabled"
+               ng-model="item.isCountable">
+      }
+      else
+      {
+        <span ng-class="{'ion-checkmark-round' : item.isCountable, 'ion-android-cancel'  : !item.isCountable}" class=" font-size-18"></span>
+      }
+      &nbsp; &nbsp;<span>Track Quantity</span>
+    </label><br />
+    <label for="option2">
+      @if (canEditStockable)
+      {
+        <input type="checkbox" id="option2"
+               ng-disabled="uiMode.isDisabled"
+               ng-model="item.isStockable">
+      }
+      else
+      {
+        <span ng-class="{'ion-checkmark-round' : item.isStockable, 'ion-android-cancel'  : !item.isStockable}" class=" font-size-18"></span>
+      }
+      &nbsp; &nbsp;<span>Is IN Warehouse</span>
+
+    </label><br />
+    <label for="option3">
+      @if (canEditIsSaleOpt)
+      {
+        <input type="checkbox" id="option3"
+               ng-disabled="uiMode.isDisabled"
+               ng-model="item.isForSale">
+      }
+      else
+      {
+        <span ng-class="{'ion-checkmark-round' : item.isForSale, 'ion-android-cancel'  : !item.isForSale}" class=" font-size-18"></span>
+      }
+      &nbsp; &nbsp;<span>Is For Sale</span>
+    </label><br />
+    <label for="option4">
+      @if (canEditIsBought)
+      {
+        <input type="checkbox" id="option4"
+               ng-disabled="uiMode.isDisabled"
+               ng-model="item.isBought">
+      }
+      else
+      {
+        <span ng-class="{'ion-checkmark-round' : item.isBought, 'ion-android-cancel'  : !item.isBought}" class=" font-size-18"></span>
+      }
+      &nbsp; &nbsp;<span>I buy this Item</span>
+    </label><br />
+    <label for="option44">
+      @if (canEditIsBought)
+      {
+        <input type="checkbox" id="option44"
+               ng-disabled="uiMode.isDisabled"
+               ng-model="item.isThirdPartyItem">
+      }
+      else
+      {
+        <span ng-class="{'ion-checkmark-round color-green' : item.isThirdPartyItem, 'ion-android-cancel color-red'  : !item.isThirdPartyItem}" class=" font-size-18"></span>
+      }
+      &nbsp; &nbsp;<span>Is Third Party Item</span>
+    </label><br />
+    <label for="option5">
+      @if (canEditDiscountOpt)
+      {
+        <input type="checkbox" id="option5"
+               ng-disabled="uiMode.isDisabled"
+               ng-model="item.isDiscountable">
+      }
+      else
+      {
+        <span ng-class="{'ion-checkmark-round' : item.isDiscountable, 'ion-android-cancel'  : !item.isDiscountable}" class=" font-size-18"></span>
+      }
+      &nbsp; &nbsp;<span>Allow Discount</span>
+    </label><br />
+    <label for="option6">
+      @if (canIsTaxableOpt)
+      {
+        <input type="checkbox" id="option6"
+               ng-disabled="uiMode.isDisabled"
+               ng-model="item.isTaxable">
+      }
+      else
+      {
+        <span ng-class="{'ion-checkmark-round' : item.isTaxable, 'ion-android-cancel'  : !item.isTaxable}" class=" font-size-18"></span>
+      }
+      &nbsp; &nbsp;<span>Taxable</span>
+    </label>
+
+
+
+  </div>
+
+
+</div>
+<div class="col-sm-10">
+
+
+  <div class="pad20 border-left min-h250">
+    <ng-form name="frmStorageType" role="form" novalidate>
+      <p class="divider text-muted font-size-16">
+        Defined how this item is
+        Stored
+      </p>
+      <table class="table no-cell-border">
+        <tr class="bold font-size-11">
+          <td class=" w40">Sub-Item Description</td>
+          <td class=" w10">Unit Measure</td>
+          @if (canEditCost)
+          {<td class=" w15">Item Cost (@appSetting.CurrencySymbol)</td>}
+
+          <td class=" w20">Retail Price Income (@appSetting.CurrencySymbol)</td>
+          <td class=" w10">Reorder Level</td>
+        </tr>
+        <tr class="bold font-size-11">
+          <td class=" ">
+            <input type="text" class="ui-input ui-input-bordered ui-required"
+                   placeholder="Storage Type"
+                   name="txtDescription"
+                   ng-disabled="uiMode.isDisabled"
+                   ng-model="storageType.description"
+                   uib-tooltip="Storage Description eg 25 Litre Gallon">
+          </td>
+          <td class=" ">
+            <input type="text" class="ui-input ui-required ui-input-border"
+                   ng-model="storageType.unitOfMeasure"
+                   placeholder="Unit Measure"
+                   name="txtUnitOfMeasure"
+                   ng-disabled="uiMode.isDisabled"
+                   autocomplete="off"
+                   uib-typeahead="um.unitMeasure for um in unitOfMeasures | filter:$viewValue | limitTo:8"
+                   ng-class="{'ui-invalid-field ui-required ui-input-bordered' : frmStorageType.$dirty && frmStorageType.txtUnitOfMeasure.$dirty && frmStorageType.txtUnitOfMeasure.$invalid }"
+                   uib-tooltip="Unit Of Measure. eg Pieces, Carton, kg, bag">
+            <ng-messages for="frmStorageType.txtUnitOfMeasure.$dirty" ng-if="frmStorageType.txtUnitOfMeasure.$dirty">
+              <ng-message when="required" class="text-danger">This field is required</ng-message>
+            </ng-messages>
+
+          </td>
+          @if (canEditCost)
+          {
+            <td class=" ">
+              <input type="number" class="ui-input ui-required ui-input-border"
+                     ng-model="storageType.costPrice"
+                     ng-disabled="uiMode.isDisabled"
+                     name="txtCostPrice"
+                     required
+                     ng-class="{'ui-invalid-field ui-required ui-input-bordered' : frmStorageType.$dirty && frmStorageType.txtCostPrice.$dirty && frmStorageType.txtCostPrice.$invalid }"
+                     uib-tooltip="How much money is spent to buy this Item from Suppliers?" placeholder="Cost Price">
+
+            </td>
+          }
+
+          <td class=" ">
+            @if (canEditPrice)
+            {
+              <input type="number"
+                     uib-tooltip="Retail Price : How much would you sell to retailers? The value for CostPrice will be included."
+                     placeholder="Retail Price"
+                     ng-model="storageType.retailPrice"
+                     required
+                     name="txtRetailPrice"
+                     maxlength="12"
+                     ng-disabled="uiMode.isDisabled"
+                     ng-class="{'ui-invalid-field ui-required ui-input-bordered' : frmStorageType.$dirty && frmStorageType.txtRetailPrice.$dirty && frmStorageType.txtRetailPrice.$invalid }"
+                     class="ui-input ui-input-required ui-input-border">
+
+            }
+            <span class="bold font-size-12 theme-caption-color">@appSetting.CurrencySymbol {{(storageType.costPrice + storageType.retailPrice) | money}} </span>
+          </td>
+
+          <td class=" ">
+            <input type="number" class="ui-input ui-input-required ui-input-border"
+                   ng-model="storageType.reorderPoint"
+                   placeholder="Reorder Point"
+                   ng-required="true"
+                   name="txtReorder"
+                   required=""
+                   ng-disabled="uiMode.isDisabled"
+                   ng-class="{'ui-invalid-field ui-required ui-input-bordered' : frmStorageType.$dirty && frmStorageType.txtReorder.$dirty && frmStorageType.txtReorder.$invalid }"
+                   uib-tooltip="Reorder Point: At what level of stock would you want the system to alert you for replishment"
+                   @*                                       ng-pattern="/\d+/"*@
+                   maxlength="7">
+
+          </td>
+        </tr>
+
+      </table>
+
+      <div class="pad10">
+        Other Optional Settings
+      </div>
+      <table class="table no-cell-border">
+
+        <tr class="bold font-size-11">
+          <td class=" w25">Wholesale Price Income</td>
+          <td class=" w25">Distributor Price Income</td>
+
+          <td class=" w15">Barcode Input</td>
+
+          <td class=" " colspan="2">Action</td>
+
+        </tr>
+        <tr class="bold font-size-11">
+          <td class=" ">
+            @if (canEditPrice)
+            {
+              <input type="number"
+                     uib-tooltip="Wholesale Price : how much will sell this item to Wholesalers ?Add amount to CostPrice"
+                     placeholder="Wholesale Price"
+                     ng-model="storageType.wholesalePrice"
+                     required
+                     name="txtWholesalePrice"
+                     maxlength="12"
+                     ng-disabled="uiMode.isDisabled"
+                     ng-class="{'ui-invalid-field ui-required ui-input-bordered' : frmStorageType.$dirty && frmStorageType.txtWholesalePrice.$dirty && frmStorageType.txtWholesalePrice.$invalid }"
+                     class="ui-input ui-input-required ui-input-border">
+            }
+            <span class="bold font-size-12 theme-caption-color">@appSetting.CurrencySymbol {{(storageType.costPrice + storageType.wholesalePrice) | money}} </span>
+          </td>
+          <td class=" ">
+            @if (canEditPrice)
+            {
+              <input type="number"
+                     uib-tooltip="Distributor Price : how much will sell this item to distributors? Add amount to CostPrice"
+                     placeholder="Distributor Price"
+                     ng-model="storageType.distributorPrice"
+                     required
+                     name="txtDistributorPrice"
+                     maxlength="12"
+                     ng-disabled="uiMode.isDisabled"
+                     ng-class="{'ui-invalid-field ui-required ' : frmStorageType.$dirty && frmStorageType.txtDistributorPrice.$dirty && frmStorageType.txtDistributorPrice.$invalid }"
+                     class="ui-input ui-input-required ui-input-bordered">
+            }
+            <span class="bold font-size-12 theme-caption-color">@appSetting.CurrencySymbol {{(storageType.costPrice + storageType.distributorPrice) | money}} </span>
+          </td>
+
+          <td class=" ">
+            <input ng-disabled="uiMode.isDisabled"
+                   ng-model="storageType.barcode"
+                   type="text" class="ui-input ui-input-border "/>
+
+          </td>
+
+
+          <td class=" ">
+            <a href="" ng-disabled="!frmStorageType.$valid && !uiMode.isDisabled"
+               ng-click="addStorageType()"
+               class=" ui-button ui-button-sm "
+               ng-class="{'ui-button-block ui-button-primary':!storageType.isEditMode, 'ui-button-success':storageType.isEditMode}">
+              <span ng-if="!storageType.isEditMode">Add Sub-Item</span>
+              <span ng-if="storageType.isEditMode">Update</span>
+
+            </a>
+            <a href="" ng-if="storageType.isEditMode"
+               ng-click="cancelStorageTypeEdit()"
+               class="ui-button ui-button-danger ui-button-sm">
+              Cancel
+
+            </a>
+
+          </td>
+
+
+        </tr>
+      </table>
+
+      @Html.Partial("ui/_partials/inventory/sections_ui/_storageType_list_ui")
+
+    </ng-form>
+  </div>
+
+
+
+
+</div>
+</div>

@@ -1,0 +1,142 @@
+﻿@using asom.apps.web.Effectv.Models
+@using asom.apps.web.Effectv.Util
+<ng-form name="frmContacts" novalidate>
+
+    <div class="row">
+        <div class="col-sm-8">
+
+            <div class="pad5 margin-t-30">
+                <p class="divider">
+                    <span class="font-size-18" uib-tooltip="Add Contacts of People you may contact. For Individual Customer profile, you may ignore this section">Add Contacts</span>
+
+                </p>
+
+                <div class="pad10 ">
+                    <div class="row">
+                        <div class="col-sm-9 text-uppercase font-size-11">
+                            <div class="row ">
+                                <div class="col-sm-3 ">
+                                    <span>Contact Name</span>
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <input type="text"
+                                                   ng-disabled ="uiMode.isDisabled"
+                                                   ng-model="currentContact.firstName"
+                                                   required
+                                                   maxlength="30"
+                                                   class="ui-input ui-required" placeholder="First Name">
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text"
+                                                   ng-disabled ="uiMode.isDisabled"
+                                                   ng-model="currentContact.lastName"
+                                                   required
+                                                   maxlength="30"
+                                                   class="ui-input ui-required" placeholder="Last Name">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 ">
+                                    <span>Email Address</span>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="email"
+                                           ng-disabled ="uiMode.isDisabled"
+                                           ng-model="currentContact.email"
+                                           class="ui-input" placeholder="Email" />
+
+
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 ">
+                                    <span>Phone Number</span>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="tel"
+                                           ng-model="currentContact.phoneNumber"
+                                           ng-disabled ="uiMode.isDisabled"
+                                           class="ui-input" placeholder="Mobile Phone No." />
+
+
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 ">
+                                    <span>Job Description</span>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text"
+                                           ng-disabled ="uiMode.isDisabled"
+                                           ng-model="currentContact.jobDescription"
+                                           class="ui-input" placeholder="Job Position" />
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+
+                            <div class="card-picture">
+                                <div class="pic" style="background-image: url('@AppInfo.Get.DefaultAvarter()')" ng-style="contactPassport">
+
+                                </div>
+
+
+                            </div>
+                            <div class="pad10 text-center" ng-hide ="uiMode.isDisabled">
+                                <asom-file-upload class="ui-button-primary ui-button  ui-button-xs"
+                                                  file-change="uploadPicture(obj,2)"
+                                                  upload-url="@Url.Action("UploadFileToServer", "Home",
+                                                                  new {directoryPath = "crm\\pictures", allowedExtensions = AllowedExtensionsConstant.IMAGE_FILE_EXTENSION})"
+                                                  upload-text="Add Photo"></asom-file-upload>
+
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="margin-t-10 row ">
+                <div class="col-sm-9 col-sm-push-3">
+                    <button class="ui-button ui-button-flat-primary ui-button-sm"
+                            ng-disabled ="uiMode.isDisabled"
+                            ng-click="addContact()">
+                        <i class="ion-android-add"></i>&nbsp; Add Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-4 clear-boostrap-padding-in-row min-h150 border-radius">
+            <div class="">
+                <p class="divider pad10">Existing Contacts</p>
+                <div class="row margin-b-20" ng-repeat="c in currentCustomer.contacts">
+                    <div class="col-sm-2">
+                        <div class="card-picture-xsmall">
+                            <div class="pic" style="background-image: url('@AppInfo.Get.DefaultAvarter()')" ng-style="c.tempPic">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+
+                        <span class="font-size-15"> {{c.firstName}} {{c.lastName}}</span> &nbsp; <a href="" title="Edit Contact" ng-click="editContact(c)"><i class="ion-edit font-size-13"></i></a>  &nbsp; <a href="" title="Remove Contact" ng-click="removeContact(c)"><i class="ion-ios-trash font-size-13"></i></a>
+                        <br/>
+                        <span>{{c.phoneNumber}}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</ng-form>

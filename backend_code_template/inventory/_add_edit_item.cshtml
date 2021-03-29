@@ -1,0 +1,110 @@
+﻿@using asom.apps.Effectiv.core.model.org
+@using asom.apps.web.Effectv.Models
+@{
+var appSetting = OrganizationInfo.GetSettings();
+//  bool canRecievePayment = new IdentityStore().HasAuthority(AppPermissions.TRANSACTIONS_RECIEVE_SALES_PAYMENT);
+
+string msg;
+bool licOk = AppInfo.Get.IsLicenseValid(out msg);
+
+}
+
+
+<div>
+  <div class="modal-header  shadow-stronger-thick text-left">
+    <div class=" bg-success">
+      <div class="row">
+        <div class="col-sm-9">
+          <div class="pad10">
+            <span class="font-size-13"><span ng-show="item.isEditMode">Edit Inventory Item > {{item.name}}</span><span ng-hide="item.isEditMode">Add New Inventory Item</span></span>
+            <span class=" font-size-13 color-red" ng-if="!item.isActive">Item Not Active</span> &nbsp;
+            <span class=" font-size-13 color-red" ng-if="!item.isForSale">Item Not for sale</span>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="pad10 ">
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="bg-white-gradient pad10" ng-class="{'bg-highlight':item.isThirdPartyItem}">
+      <div class="row">
+        <div class="col-sm-3">
+          <div ng-if="item.isEditMode">
+            <button class="ui-button ui-button-primary ui-button-xs" ng-click="createNewItem()"
+                    ng-disabled="loading">
+              <span ng-if="uiMode.isDisabled">{{uiMode.editButtonText}}</span>
+              <span ng-if="!uiMode.isDisabled">Update Changes</span>
+            </button>
+            <button class="ui-button ui-button-default ui-button-xs" ng-hide="uiMode.isDisabled"
+                    ng-click="cancelEditMode()"
+                    ng-disabled="loading">
+              <i class="ion-android-create"></i> Cancel
+            </button>
+          </div>
+          <div ng-if="!item.isEditMode">
+            <button class="ui-button ui-button-success ui-button-xs"
+                    ng-disabled="frmInventoryItem.$invalid"
+                    ng-click="createNewItem()"
+                    ng-disabled="loading">
+              Save &amp; New
+            </button>
+          </div>
+        </div>
+        <div class="col-sm-4"  >
+          <p class="font-size-13 bold" ng-show="item.isThirdPartyItem">You do not Buy this Item, it Belong to a Partner</p>
+        </div>
+        <div class="col-sm-5">
+          <div ng-if="item.isEditMode" class="text-right">
+            <button class="ui-button ui-button-success ui-button-xs"
+                    ng-show="uiMode.isDisabled"
+                    ng-click="resetForm()">
+              <i class="ion-plus"></i> &nbsp; New Item
+            </button>
+            <button class="ui-button ui-button-primary ui-button-xs"
+                    ng-show="uiMode.isDisabled"
+                    ng-click="copyItem()">
+              <i class="ion-plus"></i> &nbsp; Copy As New
+            </button>
+            <button class="ui-button ui-button-danger ui-button-xs"
+                    ng-show="uiMode.isDisabled"
+                    ng-click="deleteItem()">
+              <i class="ion-ios-trash"></i> &nbsp; Delete
+
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="modal-body text-left  ">
+    @if (licOk)
+    {
+
+    <div class="pad10">
+      @Html.Partial("ui/_partials/inventory/_item_ui_page")
+    </div>
+
+    }
+    else
+    {
+    @Html.Partial("_noLicenseError", msg)
+
+    }
+  </div>
+  <div class="bg-accent-color  pad10 modal-footer">
+    <p class="">
+      <button class="pull-right ui-button ui-button-primary ui-button-xs" ng-click="saveAndClose()">Close</button>
+      <button class="ui-button pull-left ui-button-danger ui-button-xs" ng-click="dismissDialog()">Cancel</button>
+    </p>
+  </div>
+
+</div>
+
+
+
+

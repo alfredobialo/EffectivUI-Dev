@@ -1,0 +1,195 @@
+﻿@using asom.apps.Effectiv.core.model.authentication
+@using asom.apps.Effectiv.core.model.org
+@using asom.apps.web.Effectv.Models
+@{
+    var appSetting = OrganizationInfo.GetSettings();
+  string msg;
+  bool licOk = AppInfo.Get.IsLicenseValid(out msg);
+  var id = new IdentityStore();
+
+    bool canViewItemCost = new IdentityStore().HasAuthority(AppPermissions.INVENTORY_UI_VIEW_ITEM_COST);
+}
+
+
+<div>
+  <div class="modal-header  shadow-stronger-thick text-left">
+    <div class=" bg-primary">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="pad10">
+            <p class="font-size-20">
+              Search Items:
+            </p>
+          </div>
+        </div>
+        <div class="col-sm-3 text-right">
+          <p class="pull-right  font-size-24  text-left margin-t-10 margin-r-10">
+            {{data.length | number}}   <span class="font-size-14">Item(s) Selected.</span>
+
+          </p>
+        </div>
+        <div class="col-sm-5">
+          <div class="row">
+            <div class="col-sm-2 text-right pad10 clear-boostrap-padding-in-row">
+              <asom-search-cache title="More" data="fixedQueries" on-click="menuClicked(item)"></asom-search-cache>
+            </div>
+            <div class="col-sm-10 clear-boostrap-padding-in-row">
+              <div class="pad10 ">
+                <form novalidate name="frmCategory">
+                  <input type="text"
+                         focus-input
+                         name="txtCategory"
+                         placeholder="Use 'comma' for multiple search eg Smartphones,Watches,laptops"
+                         ng-model="criteria.queryString"
+                         ng-keyup="searchProduct($event)"
+                         class="ui-input font-size-17 "
+                         @*                           uib-typeahead="c.name for c in categories | filter:$viewValue | limitTo:5"*@ />
+                </form>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+        </div>
+      <div class="bg-white-gradient pad10">
+        <div class="row">
+          <div class="col-sm-4">
+
+            <p class="">
+              <span class=""><button class="ui-button ui-button-success ui-button-xs" ng-disabled="loading" ng-click="reSearch()"> <i class="ion-refresh"> </i> Reload Search</button></span>
+              <asom-item-dialog on-success="onAddNewItem(data)" class="bg-accent-color pad10 margin-l-10 font-size-12 text-uppercase shadow" >Create Item</asom-item-dialog>
+            </p>
+
+
+          </div>
+          <div class="col-sm-8 text-right">
+            <asom-data-pager
+              show-as-page-numbers="true"
+              on-page-click="gotoPage(index)"
+              pager-source="criteria"></asom-data-pager>
+
+
+          </div>
+        </div>
+      </div>
+      <md-progress-linear ng-show="loading" md-mode="indeterminate"></md-progress-linear>
+    </div>
+  </div>
+  <div class="modal-body text-left  ">
+    @if (licOk)
+    {
+      <div class="pad text-left " >
+
+
+
+        <table class="table bg-white">
+          <tr class="bg-accent-color">
+            <th width="4%">S/N</th>
+            <th width="80%">Name</th>
+            <th width="15%">Category</th>
+
+          </tr>
+          <tr ng-repeat="i in items | filter:criteria.extraData" class="hover animated ng-if " ng-class="{'danger-alert ':!i.isActive, 'bg-highlight shadow-stronger-spread' : i.isUpdated, 'bg-highlight-purple shadow-stronger-spread' : !i.isForSale}" >
+            <td><p class=" text-center font-size-15">
+            <asom-data-page-number pager-source="criteria" page-index="$index"></asom-data-page-number>
+
+            </p></td>
+            <td class="font-size-12">
+              <a class="font-size-13 pad10 theme-caption-color bold" href="" >
+
+                <asom-item-dialog  data="{id  : i.id}">{{::i.name}} &nbsp; &nbsp; <i class="ion-edit font-size-12 text-muted"></i></asom-item-dialog>
+                &nbsp; &nbsp; <span ng-hide="i.isForSale" class="font-size-12 color-red-lite"><i class="ion-alert font-size-14"></i> &nbsp; Not Sale</span>&nbsp;&nbsp;&nbsp;<span ng-hide="i.isActive" class="font-size-12 color-red-lite"><i class="ion-alert font-size-14"></i> &nbsp; Item Not Active</span>
+
+              </a>
+              <table class="table table-bordered  font-size-12 " ng-show="i.storageType.length >0">
+                <tr class="bg-success">
+
+                  <th ng-if="!i.isServiceItem" class="w10">Stock</th>
+                  <th class="w50">Description</th>
+                  <!--<th class="w10" >Qty</th>-->
+                  <th class="w15">Retail Price</th>
+                  @if (canViewItemCost)
+                  {
+                    <th class="w15">Cost Price</th>
+
+                  }
+
+                  <td class="w7" ><a href="" ng-click="selectAllStorageType(i,i.storageType)" class="ui-button ui-button-default ui-button-xxs">All</a></td>
+
+                </tr>
+                <tr ng-repeat="st in i.storageType track by st.id" ng-class="{'bg-highlight-lemon shadow-stronger':st.selected}" class="hover"  >
+
+                  <td ng-if="!i.isServiceItem" ng-class="{'bg-danger':st.unitInStock <= st.reorderPoint }"><span class="bold">{{::st.unitInStock | number}}</span> {{::st.unitOfMeasure}}</td>
+                  <td>
+                    <span ng-show="st.hasBarcode" uib-tooltip="Barcode : {{::st.barcode}}" class="font-size-15 ion-ios-barcode"> &nbsp;</span>
+                    {{::st.description}} @@  <span class="font-size-12 bold">@appSetting.CurrencySymbol{{::st.retailPrice | money}}</span>
+                    <span class="pull-right" ng-show="st.selected"><i class="ion-checkmark font-size-17 color-green-lite"></i></span>
+
+                  </td>
+                  <!--<td  ng-init="st.qty = 1">-->
+                  <!--<input placeholder="Qty Ordered" type="number" ng-model="st.qty" class="ui-input-border ui-input font-size-12"  >-->
+                <!--</td>-->
+                  <td class="bold bg-highlight-puple">
+
+                      <span>{{st.retailPrice | money}}</span>
+
+
+                  </td>
+                  @if (canViewItemCost)
+                  {
+
+                    <td class="bold bg-highlight">@appSetting.CurrencySymbol{{::st.costPrice | money}}</td>
+                  }
+                  <td class="text-right" ><a href="" ng-if="i.isForSale && i.isActive" class="ui-button margin-t-5 ui-button-default ui-button-xs ui-button-block" ng-click="selectStorageType(i,st)">Select</a></td>
+
+                </tr>
+              </table>
+              <p class="text-danger" ng-show="i.storageType.length <1"> No Storage Type defined</p>
+
+
+
+
+            </td>
+            <td class="pos-relative text-center">
+              <span class="theme-caption-color font-size-10 bold">{{::i.categoryId}}  / {{::i.itemType}} </span>
+              <br>
+              <img ng-src="{{::i.pictureUrl}}" alt="{{::i.name}}"  width="60px" class="">
+              <!--&nbsp; &nbsp;<a target="_blank" title="Preview Image" ng-href="{{::i.pictureUrl}}"><i class="ion-ios-camera-outline font-size-16"></i></a>-->
+
+            </td>
+
+          </tr>
+
+
+
+
+
+
+        </table>
+      </div>
+    }
+    else
+    {
+      @Html.Partial("_noLicenseError", msg)
+    }
+
+
+
+
+  </div>
+  <div class="bg-accent-color  pad10 modal-footer">
+    <p class="">
+      <button class="pull-right ui-button ui-button-success ui-button-sm" ng-click="saveAndClose()" ng-disabled="data.length==0">Add Selected Items &amp; Close</button>
+      <button class="ui-button pull-left ui-button-danger ui-button-sm" ng-click="dismissDialog()">Cancel</button>
+    </p>
+  </div>
+
+</div>
+
+
+
+
+
+

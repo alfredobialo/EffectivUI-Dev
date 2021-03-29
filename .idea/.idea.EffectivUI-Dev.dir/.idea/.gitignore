@@ -1,0 +1,13 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/projectSettingsUpdater.xml
+/.idea.EffectivUI-Dev.iml
+/modules.xml
+/contentModel.xml
+# Datasource local storage ignored files
+/../../../../../../../../../../../../../../:\asom\projects\web\angular\Metronic_v7.1.2\Metronic v7.1.2\theme\html\demo1\EffectivUI-Dev\.idea\.idea.EffectivUI-Dev.dir\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/

@@ -1,0 +1,40 @@
+﻿<div  >
+    <div class="modal-header bg-accent-color " >
+        <p class="font-size-14 text-left pad10">
+            {{!data.addNew ? currentCustomer.name : 'Create New Customer Record' }}
+            @*        <a href="" class="ui-button ui-button-danger ui-button-sm pull-right "><i class="font-size-14 ion-close"></i></a>*@
+        </p>
+
+    </div>
+    <md-progress-linear ng-show="loading" md-mode="indeterminate"></md-progress-linear>
+<div class="modal-body text-left  overflow-auto" @*ng-controller="CustomerController" *@>
+  <div class="bg-white shadow">
+    @Html.Partial("ui/_partials/crm/section_ui/_customer_profile_ui")
+    @Html.Partial("ui/_partials/crm/section_ui/_customer_profile_tab_ui")
+
+  </div>
+
+   <!--<div ng-if="dialog.mode==2 && dialog.showDetailed">-->
+
+  <!--</div>-->
+
+</div>
+<div class="theme-bg-color pad10">
+    <p class="text-right">
+@*        <span class="text-left">*@
+@*            <button ng-show="dialog.mode==2" class="ui-button ui-button-default ui-button-sm" ng-click="showMoreOptions()">*@
+@*                <span ng-show="dialog.mode==2">More Options</span>*@
+@*                *@
+@*        </button>*@
+@*        </span>*@
+          <button class="ui-button pull-left ui-button-danger ui-button-sm" ng-click="closeDialog()">Cancel</button>
+        <button  class="ui-button ui-button-success ui-button-sm" ng-click="saveAndClose()" ng-disabled="uiMode.isDisabled">Save</button>
+      <button ng-show="data.addNew && data.close==false" class="ui-button ui-button-success ui-button-sm" ng-click="saveAndNew()">Save &amp; New</button>
+
+    </p>
+</div>
+
+</div>
+
+
+

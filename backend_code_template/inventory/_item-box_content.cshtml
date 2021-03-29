@@ -1,0 +1,51 @@
+﻿@using asom.apps.Effectiv.core.model.org
+@{
+    var appSetting = OrganizationInfo.GetSettings();
+}
+
+<div ng-class="{'danger-alert ':!i.isActive}">
+    <div class="">
+        <p class="font-size-13 text-center">
+            <a href=""
+               ng-click="editItemOrService(i)"
+               ng-class="{'bg-danger' : i.storageType.length <= 0,'bg-primary':i.storageType.length > 0} "
+               class="display-block text-center pad10 color-white-forced">{{::i.name}}</a>
+          <a href="" class="link-button font-size-13 bold" title="Open in Product/Service Page" ui-sref="^.add-new-item-state({mode : 1, id : i.id})" ng-click="setPrefCriteriaOnUi()"><i class="ion-android-share-alt"></i></a>
+        </p>
+    </div>
+    <div class="pad10">
+        <div class="row" ng-if="::i.storageType.length <= 0">
+            <div class="pad10 text-center  ">
+                <img ng-src="{{::i.pictureUrl}}" alt="{{::i.name}}" width="75" class="img-responsives">
+                <p class="text-center font-size-12">No Storage Type defined</p>
+            </div>
+
+        </div>
+        <div class="row" ng-if="::i.storageType.length >0">
+            <div class="col-sm-2 clear-boostrap-padding-in-row ">
+                <img ng-src="{{::i.pictureUrl}}" alt="{{::i.name}}" width="50" class="img-responsives">
+            </div>
+            <div class="col-sm-10 clear-boostrap-padding-in-row">
+                <table class="table table-bordered font-size-11">
+                    <tr>
+                        <th ng-if="!i.isServiceItem">Stock</th>
+                        <th colspan="{{::i.isServiceItem ? 2 : 1}}">Desc.</th>
+                        <th>R.Price</th>
+                    </tr>
+                    <tr ng-repeat="st in i.storageType" ng-class="{'bg-danger':st.unitInStock <= st.reorderPoint && !i.isServiceItem}">
+                        <td ng-if="!i.isServiceItem"><span class="bold">{{::st.unitInStock | number}}</span> {{::st.unitOfMeasure}}</td>
+                        <td colspan="{{::i.isServiceItem ? 2 : 1}}">
+                          <span ng-show="s.hasBarcode" uib-tooltip="Barcode : {{s.barcode}}" class="font-size-15 ion-ios-barcode"> &nbsp;</span>
+                          {{::st.description}}</td>
+                        <td>@appSetting.CurrencySymbol{{::st.retailPrice | money}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <p class="font-size-11 pad10">
+        <i class="ion-earth"> </i>
+        <a href="" class="theme-caption-color"> {{::i.categoryId}}</a>
+    </p>
+</div>
+

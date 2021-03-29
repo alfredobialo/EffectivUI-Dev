@@ -1,0 +1,157 @@
+﻿@using asom.apps.Effectiv.core.model.org
+@{
+    var appSetting = OrganizationInfo.GetSettings();
+}
+<div class="pad10 text-center" ng-show="loadingHistory">
+
+    <img src="~/images/ajax-loader.gif" />
+</div>
+<table class="table">
+
+    <tr class="bg-success">
+        <th class="w7 ion-chev" ng-click="sortField =''; reverse=false">
+            S/N &nbsp; <span ng-show="sortField != ''"
+                             class="ion-funnel font-size-11" uib-tooltip="Remove Sorting">
+
+            </span>
+        </th>
+        <th class="w13" ng-click="order('invoiceNo')">
+            Code
+            <span ng-show="sortField == 'invoiceNo'"
+                  ng-class="{'ion-chevron-down' : reverse,'ion-chevron-up' : !reverse}">
+
+            </span>
+        </th>
+
+        <th colspan="2" ng-click="order('salesPersonInfo.displayName')">
+            Sales Person
+            &nbsp; <span ng-show="sortField == 'salesPersonInfo.displayName'"
+                         ng-class="{'ion-chevron-down' : reverse,'ion-chevron-up' : !reverse}">
+
+            </span>
+        </th>
+        @*                <th>Sales Person</th>*@
+
+        <th ng-click="order('status')" class="w10">
+            Status
+            &nbsp; <span ng-show="sortField == 'status'"
+                         ng-class="{'ion-chevron-down' : reverse,'ion-chevron-up' : !reverse}">
+
+            </span>
+        </th>
+        <th ng-click="order('orderDate')">
+            Order Date
+            &nbsp; <span ng-show="sortField == 'orderDate'"
+                         ng-class="{'ion-chevron-down' : reverse,'ion-chevron-up' : !reverse}">
+
+            </span>
+        </th>
+        <th class="w13 text-right" ng-click="order('netTotal')">
+            Net Total
+            &nbsp; <span ng-show="sortField == 'netTotal'"
+                         ng-class="{'ion-chevron-down' : reverse,'ion-chevron-up' : !reverse}">
+
+            </span>
+        </th>
+        <th ng-click="order('channelId')">
+            Channel Code
+            &nbsp; <span ng-show="sortField == 'channelId'"
+                         ng-class="{'ion-chevron-down' : reverse,'ion-chevron-up' : !reverse}">
+
+            </span>
+        </th>
+    </tr>
+    <tr ng-if="salesOrder.length == 0">
+        <td colspan="9">
+            <p class="font-size-18 text-center">No Sales Record Found</p></td>
+    </tr>
+    <tr class=""
+        ng-class="{'bg-highlight':so.isInvoiced}"
+        ng-repeat="so in salesOrder |filter:criteria.queryString|orderBy:sortField:reverse track by so.invoiceNo">
+        <td>
+            <span class="font-size-11">{{$index+1}}</span>
+            <span class="pull-right">
+
+                <div class="display-inline  " uib-dropdown ng-if="so.isInvoiced">
+                    <button href="" class="ui-button ui-button-flat-default ui-button-xs animated anim-if"
+                            uib-dropdown-toggle>
+                        <i class="ion-printer font-size-13"></i> &nbsp;<i class="ion-chevron-down"> </i>
+
+                    </button>
+                    <ul uib-dropdown-menu>
+
+                        <li>
+                            <a href=""
+                               ng-click="printInvoice(so,1)"><i class="ion-ios-printer  font-size-15 theme-caption-color"></i>&nbsp; Print as Word</a>
+                        </li>
+                        <li>
+                            <a href="" ng-click="printInvoice(so,2)"><i class="ion-ios-printer  font-size-15 theme-caption-color"></i> &nbsp;Print as Pdf</a>
+                        </li>
+                      <li>
+                         <a href="" ng-click="printInvoice(so,5)"><i class="ion-document theme-caption-color"></i> &nbsp;Print as Excel</a>
+                      </li>
+                        <li class="divider"></li>
+
+                        <li><a href="" ng-click="printInvoice(so,3)"><i class="ion-android-pin theme-caption-color"></i> &nbsp;Print POS</a></li>
+                    </ul>
+                </div>
+            </span>
+        </td>
+        <td>
+            <a href=""  class="bold font-size-13">
+              <asom-sales-order-dialog data="{salesOrder: so.invoiceNo}" class="" title="{{::so.invoiceNo}}"></asom-sales-order-dialog>
+
+            </a>
+
+
+          @*                    <span ng-if="!so.canModify"class="bold font-size-13"> {{::so.invoiceNo}}</span>*@
+            <br/>
+            <small class="text-muted"> {{::so.orderDate|humanize:'ago':28}}</small>
+        </td>
+
+        <td class="w7">
+            <div class="card-picture-xsmall">
+                <div class="pic display-inine-block"
+                     ng-style="{'background-image' :'url('+so.salesPersonInfo.pictureUrl+')'}">
+
+                </div>
+            </div>
+        </td>
+        <td>
+
+            {{::so.salesPersonInfo.displayName}}<br/><small class="text-muted">{{::so.salesPersonInfo.id}}</small>
+        </td>
+
+        <td class="font-size-12">
+            <span ng-class="{'bold color-red' : so.isInvoiced}">{{::so.status}}</span>
+            <br>
+            <span class="font-size-10">Payment : {{so.paidComplete}}</span>
+        </td>
+        <td>{{::so.orderDate|date:medium}}</td>
+        <td class="theme-caption-bg-color font-size-12 text-right">
+            @appSetting.CurrencySymbol{{::so.netTotal | money}}
+            <br/>
+            <small class="text-muted pull-right" ng-show="so.balance>0">Bal: {{so.balance | money}}</small>
+        </td>
+        <td class="font-size-11">
+            {{::so.channelId}}
+
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+
+        <td></td>
+
+        <td class="bold theme-caption-bg-color text-right">
+            <p class="double-underline">@appSetting.CurrencySymbol{{sumSalesTotal() | money}}</p>
+            <span class="color-red font-size-11">Bal: @appSetting.CurrencySymbol{{totalBal | money}}</span>
+        </td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>

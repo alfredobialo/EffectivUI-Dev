@@ -1,0 +1,205 @@
+﻿@using asom.apps.Effectiv.core.model.authentication
+@using asom.apps.web.Effectv.Models
+@using asom.apps.web.Effectv.Util
+@{
+//    var id = new IdentityStore();
+//    bool
+//        canEditAccount = id.HasAuthority(new string[] { AppPermissions.INVENTORY_UI_EDIT_ITEM_COST, AppPermissions.ACCOUNTING_EDIT_CHARTS_OF_ACC });
+
+
+}
+<div class="pad10 ">
+  <div class="row">
+    <asom-progress-bar processing="loading"></asom-progress-bar>
+    <div class="col-sm-12 shadow color-default bg-white" ng-class="{'bg-highlight-red' : !item.isActive, 'bg-highlight-purple' : !item.isForSale,'bg-highlight shadow-stronger-spread' : item.isThirdPartyItem}">
+      <div class=" min-h400 pad10">
+        <div class="row">
+          <div class="col-sm-9">
+            <form novalidate role="form" name="frmInventoryItem" class="form-horizontal">
+              <div class="pad20">
+                <div class="row ">
+                  <div class="col-sm-3 text-uppercase"><span>Item Name</span></div>
+                  <div class="col-sm-9">
+                    <div class="row">
+                      <!--uib-tooltip="First Name" tooltip-placement="bottom"-->
+                      <!--uib-tooltip="Last Name" tooltip-placement="bottom"-->
+                      <div class="col-sm-12">
+                        <input type="text" name="txtItemName"
+                               required
+                               ng-disabled="uiMode.isDisabled"
+                               ng-maxlength="150"
+                               focus-input
+                               ng-model="item.name"
+                               class="ui-input  ui-required font-size-28"
+                               ng-class="{'ui-invalid-field' : frmInventoryItem.$dirty && frmInventoryItem.txtItemName.$dirty && frmInventoryItem.txtItemName.$invalid }"
+                               placeholder="Item Name : eg Galaxy S7 Edge, Repair Service">
+                        <ng-messages for="frmInventoryItem.txtItemName.$error"
+                                     ng-if="frmInventoryItem.txtItemName.$dirty">
+                          <ng-message when="required" class="text-danger">
+                            Item Name field is
+                            required
+                          </ng-message>
+                          <ng-message when="maxlength" class="text-danger">
+                            Must not exceed 150
+                            characters
+                          </ng-message>
+                        </ng-messages>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row ">
+                  <div class="col-sm-3 text-uppercase"><span>Description</span></div>
+                  <div class="col-sm-9">
+                    <div class="row">
+                      <!--uib-tooltip="First Name" tooltip-placement="bottom"-->
+                      <!--uib-tooltip="Last Name" tooltip-placement="bottom"-->
+                      <div class="col-sm-12">
+                        <!--<textarea name="txtItemDescription" rows="2" class="ui-input  ui-required font-size-14"-->
+                        <!--placeholder="Item Description : eg Best Smartphone of 2016 from Samsung "></textarea>-->
+                        <textarea
+                               ng-disabled="uiMode.isDisabled"
+                               name="txtItemDescription"
+                               ng-model="item.description"
+                               class="ui-input ui-required font-size-14"
+                                rows="4"
+                               placeholder="Item Description : eg Best Smartphone of 2016 from Samsung ">
+
+
+                        </textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row ">
+                  <div class="col-sm-3 text-uppercase"><span>Item Code / Make</span></div>
+                  <div class="col-sm-9">
+                    <div class="row">
+                      <!--uib-tooltip="First Name" tooltip-placement="bottom"-->
+                      <!--uib-tooltip="Last Name" tooltip-placement="bottom"-->
+                      <div class="col-sm-6">
+                        <input type="text" name="txtId"
+                               class="ui-input  "
+                               ng-disabled="uiMode.isDisabled"
+                               ng-model="item.id"
+                               maxlength="50"
+                               placeholder="Auto generated...">
+                      </div>
+                      <div class="col-sm-6">
+                        <input type="text" name="txtMake"
+                               class="ui-input  "
+                               ng-disabled="uiMode.isDisabled"
+                               ng-model="item.make"
+                               placeholder="Make">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row ">
+                  <div class="col-sm-3 text-uppercase"><span>Category / Type</span></div>
+                  <div class="col-sm-9">
+                    <div class="row">
+
+                      <div class="col-sm-6">
+                        <asom-item-category-selector category="item.categoryId" on-loaded="onCategoryLoaded(data)"  disable="uiMode.isDisabled" data="category"></asom-item-category-selector>
+
+
+                      </div>
+                      <div class="col-sm-6">
+                        <select name="cboType"
+                                class="ui-input bold font-size-16 bg-highlight"
+                                ng-model="item.itemType"
+                                ng-disabled="uiMode.isDisabled"
+                                placeholder="Select Type"
+                                ng-options=" ty.id as ty.tag for ty in itemType">
+                          <option value="">Item Type</option>
+
+                        </select>
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+              </div>
+            </form>
+          </div>
+          <div class="col-sm-3">
+            <div class=" min-h200">
+              <div class="pad10 pos-abs w100 max-height-300 ">
+
+                <p class="font-size-14 divider">Item Picture Options</p>
+                <div class="text-center">
+                  <asom-file-upload class="ui-button-primary ui-button ui-button-sm"
+                                    ng-hide="uiMode.isDisabled"
+                                    file-change="uploadPicture(obj)"
+                                    upload-url="@Url.Action("UploadFileToServer", "Home",
+
+                  new
+                  {
+                  directoryPath = "inventory\\product_images", allowedExtensions =
+                  AllowedExtensionsConstant.IMAGE_FILE_EXTENSION
+                  })"
+                  upload-text="Select Picture"></asom-file-upload>
+                </div>
+
+                <div class="centralize text-center w90 bg-white-gradient min-h250  image-bg-container"
+
+                >
+                  <!--ng-style="{'background-image':'url({{picture || '@AppInfo.Get.AppDefaultImage' }})'}"-->
+                  <img ng-src="{{picture || '@AppInfo.Get.AppDefaultImage'}}" alt="" width="45%"  class="">
+                </div>
+                <div class="pad10 centralize">
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form name="frmMain" novalidate autocomplete="off">
+          <div class="pad10 ">
+            <uib-tabset>
+              <uib-tab heading="Storage Option">
+                <div class="div min-h200 pad20 bg-white">
+                  @Html.Partial("ui/_partials/inventory/sections_ui/storage_options")
+                </div>
+              </uib-tab>
+              <uib-tab heading="Accounting" >
+                <div class="div min-h200 pad20 bg-white">
+                  @Html.Partial("ui/_partials/inventory/sections_ui/accounting")
+                </div>
+              </uib-tab>
+              <uib-tab heading="Stock Manager" ng-hide="item.isServiceItem || !item.isEditMode">
+                <div class="div min-h200 pad20 bg-white">
+                  @Html.Partial("ui/_partials/inventory/sections_ui/stock_manager")
+                </div>
+              </uib-tab>
+              <uib-tab heading="Stock History" ng-click="showHistoryfor(item)" ng-hide="item.isServiceItem || !item.isCountable || !item.isEditMode">
+                <div class="div min-h200 pad20 bg-white">
+                  @Html.Partial("ui/_partials/inventory/sections_ui/_history")
+                </div>
+              </uib-tab>
+
+              <uib-tab heading="Suppliers" ng-hide="item.isServiceItem || !item.isBought || !item.isEditMode">
+                <div class="div min-h200 pad20 bg-white">
+                  <p class="font-size-18">No Supplier Record</p>
+                </div>
+              </uib-tab>
+              <uib-tab heading="Extra Data">
+                <div class="div min-h200 pad20 bg-white">
+                  @Html.Partial("ui/_partials/inventory/sections_ui/others")
+                </div>
+              </uib-tab>
+            </uib-tabset>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

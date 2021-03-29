@@ -1,0 +1,116 @@
+﻿@using asom.apps.Effectiv.core.model.authentication
+
+@{
+  var id = new IdentityStore();
+  bool
+    canEditAccount = id.HasAuthority(new string[] { AppPermissions.INVENTORY_UI_EDIT_ITEM_COST, AppPermissions.ACCOUNTING_EDIT_CHARTS_OF_ACC }),
+    canAssignPartner  = id.HasAuthority(AppPermissions.ACCOUNT_MANAGER);
+
+
+}
+
+<span class="font-size-16">Inventory Accounts</span>
+<div class="row min-h200">
+  <div class="col-sm-7">
+    <p class="divider"></p>
+
+    <div class="pad10 " ng-if="item.isThirdPartyItem">
+      <p class="color-red pad10 font-size-16 bold">This a third party Item, please select the Customer whose account will be credited
+      whenever this item is sold. Note the cost for the Item ({{item.name}}) should be the customer's selling price to your company.</p>
+      <br>
+      Customer To Credit : <span class="bold" >{{item.thirdPartyId || "No Customer Assigned Yet"}}</span> <br>
+      @if (canAssignPartner)
+      {
+        <asom-customer-selector auto-save="false" disabled="uiMode.isDisabled"  key="item.thirdPartyId"></asom-customer-selector>
+      }
+
+
+    </div>
+    <div class="pad5">
+        @if (canEditAccount)
+                {
+                <div class="row ">
+                  <div class="col-sm-3 text-uppercase">
+                    <span>Income Account</span>
+                  </div>
+                  <div class="col-sm-9">
+                    <asom-account-names include-parent="true" use-context="true" context="income" disabled="uiMode.isDisabled" show-tag="showAccTag" default-account="item.incomeAccount" model="income" on-select="getIncomeAcc(account)"
+                                        get-by-type="true" query="INCOME"></asom-account-names>
+
+                  </div>
+                </div>
+                  <div class="row margin-t-20">
+                   <div class="col-sm-3">
+                  <span>Expense Account</span>
+
+                   </div>
+                   <div class="col-sm-9">
+                     <asom-account-names include-parent="true" disabled="uiMode.isDisabled" show-tag="showAccTag" default-account="item.expenseAccount" on-select="getExpenseAcc(account)"
+                                          get-by-type="true" query="EXPENSE" use-context="true" context="expense"></asom-account-names>
+                   </div>
+                 </div>
+                }
+                else
+                {
+                  <div class="row ">
+                    <div class="col-sm-3 text-uppercase">
+                      <span>Income Account</span>
+                    </div>
+                    <div class="col-sm-9">
+                      <asom-account-names include-parent="true" use-context="true" context="income" disabled="true" show-tag="showAccTag" default-account="item.incomeAccount" model="income" on-select="getIncomeAcc(account)"
+                                          get-by-type="true" query="INCOME"></asom-account-names>
+
+                    </div>
+                  </div>
+                  <div class="row margin-t-20">
+                    <div class="col-sm-3">
+                      <span>Expense Account</span>
+
+                    </div>
+                    <div class="col-sm-9">
+                      <asom-account-names include-parent="true" disabled="true" show-tag="showAccTag" default-account="item.expenseAccount" on-select="getExpenseAcc(account)"
+                                          get-by-type="true" query="EXPENSE" use-context="true" context="expense"></asom-account-names>
+                    </div>
+                  </div>
+                }
+                @if (canEditAccount)
+                {
+                <div class="row margin-t-20" ng-if="item.isBought && !item.isServiceItem">
+                  <div class="col-sm-3 text-uppercase"><span>Purchase Account</span></div>
+                  <div class="col-sm-9">
+
+                        <asom-account-names disabled="uiMode.isDisabled" show-tag="showAccTag"
+                                            use-context="true" context="inventory"
+                                            default-account="item.purchaseAccount" model="purchase"
+                                            on-select="getPurchaseAcc(account)" include-parent="true" get-by-tag="true" query="INVENTORY"></asom-account-names>
+
+
+                    </div>
+
+                </div>
+                }
+                else
+                {
+                <div class="row margin-t-20" ng-if="item.isBought && !item.isServiceItem">
+                  <div class="col-sm-3 text-uppercase"><span>Purchase Account</span></div>
+                  <div class="col-sm-7">
+
+                    <asom-account-names disabled="true" show-tag="showAccTag" default-account="item.purchaseAccount"
+                                        model="purchase"   get-by-type="true" query="ASSET"></asom-account-names>
+
+
+                  </div>
+
+                </div>
+                }
+    </div>
+  </div>
+  <div class="col-sm-5">
+    <p class="divider font-size-16 pad10">{{item.name}} Summary</p>
+    <div class="pad10">
+        Total Sales Made : ? <br>
+        Total Purchase : ? <br>
+
+    </div>
+  </div>
+</div>

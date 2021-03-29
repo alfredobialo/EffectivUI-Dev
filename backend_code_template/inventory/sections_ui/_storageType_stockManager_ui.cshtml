@@ -1,0 +1,77 @@
+﻿@using asom.apps.Effectiv.core.model.authentication
+@using asom.apps.web.Effectv.Models
+@*@using asom.apps.Effectiv.core.model.org*@
+@{
+     bool canUpdateStock = UserIdentityModel.HasAuthority(AppPermissions.INVENTORY_UPDATE_ITEM_STOCK);
+     bool canAddWarehouseStock  =  UserIdentityModel.HasAuthority(AppPermissions.WAREHOUSE_MANAGER);
+    string msg;
+    bool hasWarehouseFeature = AppInfo.Get.LicenseHasValidFeature(out msg, "WAREHOUSE", "TRUE");
+}
+<div class="pad10">
+
+
+    <table class="table font-size-11">
+        <tr>
+            <th width="50%">Desc.</th>
+            <th width="13%">Current Stock.</th>
+            <th width="20%">Add Stock</th>
+            <th width="15%"></th>
+
+        </tr>
+        <tr ng-repeat="s in item.storageType" >
+            <td>
+                <span
+                    class="">{{s.description}}</span>
+            </td>
+            <td ><span ng-class="{'color-red bold font-size-12' : s.unitInStock <= s.reorderPoint}">{{s.unitInStock | number}} {{s.unitOfMeasure}}</span></td>
+            <td >
+                @if (canUpdateStock)
+                {
+                    <input type="number"
+                                           name="txtStockValue"
+                                           ng-disabled="uiMode.isDisabled"
+                                           ng-model="s.stockValue"
+                                           class="ui-input ui-input-border"/>
+                }
+                else
+                {
+                    <p class="lead">{{s.stockValue | number}}</p>
+                }
+
+            </td>
+            <td>
+                @if (canUpdateStock)
+                {
+                    <a href="" class="ui-button ui-button-xs ui-button-primary"
+                       ng-disabled="uiMode.isDisabled || !item.isEditMode"
+                       ng-click="updateStock(s)">
+                        Save
+                    </a>
+                }
+                else
+                {
+                    <span class="bold color-red">Access Denied</span>
+                }
+
+            </td>
+
+        </tr>
+    </table>
+
+    @if (hasWarehouseFeature)
+    {
+        if (canAddWarehouseStock)
+        {
+            <asom-warehouse-stock-manager items="item.storageType" enabled="!uiMode.isDisabled"></asom-warehouse-stock-manager>
+        }
+        else
+        {
+            <p class="lead text-muted">Manual Warehouse stock Entry is Disallowed</p>
+        }
+
+    }
+
+
+
+</div>
+

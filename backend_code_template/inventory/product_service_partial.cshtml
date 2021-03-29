@@ -1,0 +1,182 @@
+﻿@using asom.apps.Effectiv.core.model.authentication
+@using asom.apps.Effectiv.core.model.org
+@{
+    var appSetting = OrganizationInfo.GetSettings();
+    bool canViewItemCost = new IdentityStore().HasAuthority(AppPermissions.INVENTORY_UI_VIEW_ITEM_COST);
+}
+
+<div class=" min-h100 bg-success" asom-toolbar offset-to-element-id="app-main-menu">
+    <div class="row">
+        <div class="col-sm-7">
+            <div class="pad10">
+                <p class="font-size-14">Item and Services</p>
+
+            </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="row">
+            <div class="col-sm-2 text-right pad10 clear-boostrap-padding-in-row">
+              <asom-search-cache title="More" data="fixedQueries" on-click="menuClicked(item)"></asom-search-cache>
+            </div>
+            <div class="col-sm-10 clear-boostrap-padding-in-row">
+              <div class="pad10 ">
+              <form novalidate name="frmCategory">
+                <input type="text"
+                       focus-input
+                       name="txtCategory"
+                       placeholder="Use 'comma' for multiple search eg Smartphones,Watches,laptops"
+                       ng-model="criteria.queryString"
+                       ng-keydown="searchProduct($event)"
+                       class="ui-input font-size-17 "
+                       @*                           uib-typeahead="c.name for c in categories | filter:$viewValue | limitTo:5"*@ />
+              </form>
+            </div>
+            </div>
+          </div>
+
+
+        </div>
+    </div>
+
+    <div class="bg-white-gradient pad10">
+        <div class="row">
+            <div class="col-sm-5">
+
+                  <button class="ui-button ui-button-primary ui-button-xs" ng-disabled="loading" ng-click="reSearch()">
+                    <i class="ion-refresh"> </i> Reload Search</button>
+                    <asom-item-dialog on-success="onAddNewItemSuccess(data)" css-class="ui-button-success ui-button margin-l-10 font-size-12 text-uppercase shadow" >Create Item</asom-item-dialog>
+                    <asom-print-inventoy-stock  css-class="ui-button ui-button-primary ui-button-sm" label="Print Stock Report"></asom-print-inventoy-stock>
+<!--<button ng-click="onAddNewItemSuccess()" class="ui-button ui-button-danger ui-button-sm">Try Function</button>-->
+            </div>
+            <div class="col-sm-7 text-right">
+                <asom-data-pager
+                    show-as-page-numbers="true"
+                    on-page-click="gotoPage(index)"
+                    pager-source="criteria"></asom-data-pager>
+
+
+            </div>
+        </div>
+
+    </div>
+  <asom-progress-bar processing="loading"></asom-progress-bar>
+
+</div>
+
+<div class="pad20 rpt-bg-color-fade shadow">
+  <div class="row">
+    <div class="col-sm-4">
+      Select a Different location
+      <br>
+      <asom-dispatch-location-selector select-current-channel="true"
+                                       exclude-other-channels="true"
+                                       data="myDispatchLocation"
+                                       current-channel="currentDispatchChannel"
+                                        ></asom-dispatch-location-selector>
+
+
+    </div>
+    <div class="col-sm-8">
+      <div class="pad10 font-size-17" ng-if="!!myDispatchLocation.id">
+          Item Stock are Displayed for: <span class="bold">
+        <span ng-show="myDispatchLocation.isCurrentChannel">
+            This Channel
+        </span>
+         <span ng-hide="myDispatchLocation.isCurrentChannel"
+        class="theme-caption-color  bold">{{myDispatchLocation.name}}  ( {{myDispatchLocation.id}} )</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pad20 " >
+    <table class="table bg-white">
+        <tr class="bg-accent-color">
+          <th width="4%">S/N</th>
+            <th width="29%">Name</th>
+            <th width="57%">Description</th>
+            <th></th>
+        </tr>
+        <tr ng-repeat="i in items | filter:criteria.extraData" class="hover animated ng-if " ng-class="{'danger-alert ':!i.isActive, 'bg-highlight shadow-stronger-spread' : i.isThirdPartyItem, 'bg-highlight-purple shadow-stronger-spread' : !i.isForSale}" >
+          <td calss="text-center"><p class=" text-center font-size-14">
+            <asom-data-page-number pager-source="criteria" page-index="$index"></asom-data-page-number></p>
+
+            <span ng-click="deleteItem(i)"><i class="ion-ios-trash-outline font-size-28"></i></span>
+          </td>
+            <td class="font-size-12">
+                <a  class="font-size-15 pad10 theme-caption-color bold" href="" >
+
+                  <asom-item-dialog  data="{id  : i.id}" on-success="onAddNewItemSuccess(data)">{{::i.name}}  &nbsp; &nbsp; <i class="ion-edit font-size-12 text-muted"></i></asom-item-dialog>
+
+                </a>
+              <br>
+
+                <span class="text-muted font-size-11 bold">Code : {{::i.id}}
+                  <b class="color-red"  ng-if="i.isTaxable">TAXABLE (<small>tax will be applied</small>)</b></span><br />
+                <span class="theme-caption-color font-size-11">Category : {{::i.categoryId}}  / {{::i.itemType}} </span>
+                <br/>
+                <span class="text-muted font-size-11">
+                    Created By: <i class="ion-ios-person-outline font-size-13">
+                  &nbsp; {{::i.createdBy}}</i>  &nbsp;<br>
+                  PO-Acc :{{::i.purchaseAccount}}, Income-Acc: {{::i.incomeAccount}}, COG-Acc: {{::i.expenseAccount}}
+                </span>
+
+
+            </td>
+            <td>
+              &nbsp; &nbsp;<span ng-hide="i.isForSale" class="font-size-12 color-red-lite"><i class="ion-alert font-size-14"></i> &nbsp; Not Sale</span>&nbsp;&nbsp;&nbsp;<span ng-hide="i.isActive" class="font-size-12 color-red-lite"><i class="ion-alert font-size-14"></i> &nbsp; Item Not Active</span>
+                <span ng-show="i.isActive && i.isForSale">
+                  {{::i.description}}
+                </span>
+                <br />
+                <table class="table table-bordered table-condensed font-size-12 " ng-show="i.storageType.length >0">
+                    <tr class="bg-success">
+                        <th ng-if="!i.isServiceItem">Stock</th>
+                        <th>Desc.</th>
+                        <th>Retail Price</th>
+                        @if (canViewItemCost)
+                        {
+                            <th>Cost Price</th>
+
+                        }
+                        else
+                        {
+                          <th>Wholesale Price</th>
+                        }
+
+                    </tr>
+                    <tr ng-repeat="st in i.storageType track by st.id" >
+                        <td ng-if="!i.isServiceItem" ng-class="{'bg-danger':st.unitInStock <= st.reorderPoint }"><span class="bold">{{::st.unitInStock | number}}</span> {{::st.unitOfMeasure}}</td>
+                        <td>
+                          <span ng-show="st.hasBarcode" uib-tooltip="Barcode : {{st.barcode}}" class="font-size-15 ion-ios-barcode"> &nbsp;</span>
+                          {{::st.description}}</td>
+                        <td class="bold bg-highlight">@appSetting.CurrencySymbol{{::st.retailPrice | money}}</td>
+                        @if (canViewItemCost)
+                        {
+
+                          <td class="bold bg-highlight-cyan">@appSetting.CurrencySymbol{{::st.costPrice | money}}</td>
+                        }
+                        else
+                        {
+                          <td class="bold bg-highlight-red">@appSetting.CurrencySymbol{{::st.wholesalePrice | money}}</td>
+
+
+                        }
+
+                    </tr>
+                </table>
+                <!--<p class="text-muted" ng-hide="i.isServiceItem || !i.isCountable" > Other Availability Sources</p>-->
+                <div class="pad10" ng-show="i.isThirdPartyItem">
+                  <p class="font-size-17">This a Third Party Item. <span class="bold" ng-show="i.thirdPartyId"> From : {{i.thirdPartyId}}</span></p>
+                </div>
+            </td>
+            <td>
+                <img ng-src="{{::i.pictureUrl}}" alt="{{::i.name}}"  width="70" class="">
+              &nbsp; &nbsp;<a target="_blank" title="Preview Image" ng-href="{{::i.pictureUrl}}"><i class="ion-ios-camera-outline font-size-16"></i></a>
+            </td>
+        </tr>
+    </table>
+
+
+
+</div>

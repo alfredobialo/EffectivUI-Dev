@@ -1,0 +1,65 @@
+﻿
+
+<div class=" bg-success " asom-toolbar offset-to-element-id="app-main-menu">
+    <div class="pad10">
+        <p class="font-size-18">Manage Categories</p>
+        <span>You can add / delete categories here. </span>
+    </div>
+
+
+    <md-progress-linear ng-show="loading" md-mode="indeterminate"></md-progress-linear>
+</div>
+
+<div class="pad20">
+    <div class="pad20 bg-white border-radius shadow">
+        <div class="row">
+            <div class="col-sm-4">
+
+                <form name="frmCategory" novalidate="">
+                    <span>Category Name</span>
+                    
+                    <input type="text" value=""
+                           name="txtCategory"
+                           class="ui-input ui-input-required font-size-22" required=""
+                           placeholder="Add Category"
+                           ng-model="category.name" />
+
+                   
+                    <button class="ui-button ui-button-primary"
+                           
+                            ng-disabled=" !(frmCategory.$valid && frmCategory.txtCategory.$dirty)"
+                            ng-click="addCategory()"
+                            >Add Category</button>
+
+                </form>
+                <div class="margin-t-10 pad10 max-height-550 overflow-scroll">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Category Name</th>
+                            <th></th>
+                        </tr>
+                        <tr ng-repeat="c in categories">
+                            <td>
+                                <span >{{c.name}}</span>
+                               
+                            </td>
+                            <td>
+
+                                <button
+                                        uib-tooltip="Delete {{c.name}}"
+                                    class="ui-button ui-button-flat-default ui-button-sm"
+                                    ng-click="deleteCategory(c)"><i class="ion-ios-trash "></i></button>
+
+                            </td>
+                        </tr>
+                        
+                    </table>
+                </div>
+
+            </div>
+            <div class="col-sm-8"></div>
+        </div>
+       
+    </div>
+
+</div>

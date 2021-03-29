@@ -1,0 +1,217 @@
+﻿<asom-base-container toolbar="true" nav="true">
+    <top-nav >
+        <div class="subheader py-2 py-lg-4 subheader-solid" id="kt_subheader">
+            <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
+                <!--begin::Info-->
+                <div class="d-flex align-items-center flex-wrap mr-2">
+                    <!--begin::Page Title-->
+                    <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">Customer List</h5>
+                    <!--end::Page Title-->
+                    <!--begin::Actions-->
+                    <div class="subheader-separator subheader-separator-ver mt-2 mb-2 mr-4 bg-gray-200"></div>
+                    <a href="" class="btn btn-light-warning font-weight-bolder btn-sm">Add Customer</a>
+                    <!--end::Actions-->
+                </div>
+                <!--end::Info-->
+                <!--begin::Toolbar-->
+
+                <!--end::Toolbar-->
+            </div>
+        </div>
+
+    </top-nav>
+    <page-content>
+      <div class=" bg-light-success text-suceess" asom-toolbar offset-to-element-id="app-main-menu">
+          <div class="">
+              <div class="row">
+                  <div class="col-sm-7">
+                      <p class="font-size-14 pad10 "> Customer List</p>
+                  </div>
+                  <div class="col-sm-4 col-sm-push-1">
+                      <div class=" ">
+
+
+                            <div class="row">
+                              <div class="col-sm-3 text-right pad5 clear-boostrap-padding-in-row">
+                                <asom-search-cache title="More" data="fixedQueries" on-click="menuClicked(item)"></asom-search-cache>
+                              </div>
+                              <div class="col-sm-9 clear-boostrap-padding-in-row">
+                                <form name="frmSearch">
+                                <div class="pad5 ">
+                                  <input type="text"
+                                         class="ui-input font-size-14" name="txtSearch"
+                                         ng-model="criteria.queryString"
+                                         ng-keyup="searchCustomer($event)"
+                                         placeholder="Search Customer" />
+                                </div>
+                                </form>
+                              </div>
+
+                            </div>
+
+
+
+                      </div>
+                  </div>
+              </div>
+
+
+          </div>
+
+          <div class="bg-white-gradient pad10 min-h50">
+              <div class="row">
+                  <div class="col-sm-4">
+                      <a class="ui-button ui-button-primary ui-button-sm"
+                         ui-sref="crm-state.add-new-customer-state">
+                          New Customer
+                      </a>
+                      <div uib-dropdown class="display-inine-block">
+                          <button href="" class="ui-button ui-button-sm "
+                                  uib-dropdown-toggle
+                                  ng-class="{'ui-button-danger' : toggleDelete,'ui-button-flat-success' : !toggleDelete}">
+                              <i class="ion-android-bulb"> </i> &nbsp; Action &nbsp; <i class="ion-chevron-down"> </i>
+
+                          </button>
+                          <ul uib-dropdown-menu>
+                              <li><a href="" ng-click="deleteToggle()">Batch Delete</a></li>
+                              <li><a href="">Select All</a></li>
+                              <li class="divider"></li>
+
+                          </ul>
+                      </div>
+
+
+                      <div uib-dropdown class="display-inine-block">
+                          <button href="" class="ui-button ui-button-sm ui-button-flat-success"
+                                  uib-dropdown-toggle
+                                  >
+                              <i class="ion-ios-printer-outline"> </i> &nbsp; Print &nbsp; <i class="ion-chevron-down"> </i>
+
+                          </button>
+                          <ul uib-dropdown-menu>
+
+                              <li><a href="" ng-click="renderReport(1)"><i class="ion-android-download"></i>   MS Word</a></li>
+                              <li>
+
+                                  <a ng-click="renderReport(2)"
+                                     href=""><i class="ion-android-download"></i>   MS Excel</a>
+                              </li>
+                              <li class="divider"></li>
+                              <li>
+
+                                  <a ng-click="renderReport(3)"
+                                     href=""><i class="ion-paperclip"></i>  PDF</a>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+                  <div class="col-sm-8">
+
+                      <div class="text-right">
+                          <button class="ui-button ui-button-flat-success ui-button-xs" ng-click="setViewMode(1)" ng-class="{'ui-button-success' : selectedViewMode == 'box-col-3'}"><i class="ion-card"></i>&nbsp;3 Col</button>
+                          <button class="ui-button ui-button-flat-success ui-button-xs" ng-click="setViewMode(2)" ng-class="{'ui-button-success' : selectedViewMode == 'box-col-4'}"><i class="ion-card"></i>&nbsp;4 Col</button>
+                          <button class="ui-button ui-button-flat-success ui-button-xs" ng-click="setViewMode(3)" ng-class="{'ui-button-success' : selectedViewMode == 'grid'}"><i class="ion-ios-grid-view"></i>&nbsp;Grid</button>
+                          &nbsp;&nbsp;<asom-data-pager pager-source="criteria" on-page-click="gotoPage(index)"></asom-data-pager>
+
+                      </div>
+                  </div>
+              </div>
+
+          </div>
+          <md-progress-linear ng-show="loading" md-mode="indeterminate"></md-progress-linear>
+      </div>
+      <div class="pad0 ">
+          @*| limitTo:uiPager.pageSize*@
+      <div class="box-container " ng-class="selectedViewMode" ng-if="selectedViewMode != 'grid'" >
+          <div class="floating-box shadow  animated anim-ui-repeat" ng-click="markForDelete(c)"
+               ng-repeat="c in customers | filter:criteria.extraData " ng-class="{'danger-alert' : !c.isActive || c.isMarkForDelete}">
+              <div class="adjourner" ng-class="{'bg-danger' : !c.isActive, 'bg-accent-color' : c.isActive && !c.isSupplier , 'bg-primary' : c.isActive && c.isSupplier}"></div>
+              <div class="box-img">
+                  <div class="normal-img-style xxsmall"
+                       ng-class="{'xsmall':selectedViewMode == 'box-col-3'}"
+                       ng-style="{'background-image' : 'url({{c.companyLogoUrl}})'}"></div>
+              </div>
+              <div class="box-content">
+                  <div class="box-header"
+                       ng-class="{'text-muted line-through' : !c.isActive}">
+                      <input type="checkbox" ng-model="c.isMarkForDelete" ng-show="toggleDelete" /> &nbsp;<a ui-sref="^.add-new-customer-state({id:c.id})" title="Edit" class="font-size-13">
+                          <i class="ion-edit"></i>
+                          &nbsp; <span>{{::c.name}}</span>
+
+                      </a>
+                    &nbsp; &nbsp;<span ng-show="!!c.emailAddress" class=""><i class="ion-ios-email-outline font-size-17 color-red" title="{{c.emailAddress}}"></i></span>
+
+                                         <!--<ul uib-dropdown-menu>-->
+                                             <!--<li><a href="" ng-click="editCustomer(c)">Edit Record</a></li>-->
+                                             <!--<li><a href="" ng-click="editCustomer(c)">Delete Record</a></li>-->
+                                             <!--<li><a href="" ng-click="editCustomer(c)">New Sales Transaction</a></li>-->
+                                         <!--</ul>-->
+                  </div>
+                  <span class="font-size-11">Phone : {{::c.phoneNumber}}</span>
+                  <p class="font-size-11" ng-switch on="c.isSupplier">
+                      <span ng-switch-when="true">Group : <b>Supplier</b></span>
+                      <span ng-switch-when="false">Group : <b>Buyer</b></span>
+                      <span class="font-size-11" ng-show="c.contacts.length >0">with {{::c.contacts.length | number}} contact(s)</span>
+                  </p>
+                  <p class="font-size-11">
+                      Price Level : {{::c.priceLevel}}  &nbsp;
+                    <a ng-show="!c.isSupplier"
+                                                                  class=" font-size-10" >
+                    <asom-sales-order-dialog title="New invoice " data=" {customerId  : c.id}">      <i class="ion-ios-cart-outline font-size-15"></i>  &nbsp;</asom-sales-order-dialog>
+                  </a>
+                  </p>
+
+              </div>
+
+          </div>
+      </div>
+
+      <div class="clearfix margin-20 pad15 bg-white shadow" ng-if="selectedViewMode == 'grid'">
+          <table class="table table-bordered font-size-12">
+              <tr class="bg-accent-color">
+                  <th class="w5 text-center">{{(customers | filter:criteria.extraData).length}}</th>
+                  <th class="w25">Name</th>
+                  <th class="w13">Phone Number</th>
+                  <th class="w7">Location</th>
+                  <th class="w10">Group</th>
+                  <th class="w10">Price Level</th>
+                  <th class="w7">Contacts</th>
+                  <th class="w10">Date Created</th>
+              </tr>
+              <tr ng-repeat="c in customers | filter:criteria.extraData track by c.id" ng-class="{'danger-alert' : !c.isActive || c.isMarkForDelete, 'bg-highlight-cyan':c.isSupplier}" class=" cursor" ng-click="markForDelete(c)">
+                  <td><input type="checkbox" ng-model="c.isMarkForDelete" ng-show="toggleDelete">
+
+                    <asom-data-page-number page-index="$index" pager-source="criteria"></asom-data-page-number></td>
+                  <td class="bg-highlight-blue">
+                      <a ui-sref="^.add-new-customer-state({id:c.id})" title="Edit" class="font-size-13">
+                          <i class="ion-edit"></i>
+
+                          &nbsp; <span>{{::c.name}}</span>
+                      </a>
+                    <asom-sales-order-dialog title="New Sales" ng-show="!c.isSupplier" data=" {customerId  : c.id}" class="color-blue pull-right font-size-11"></asom-sales-order-dialog>
+
+                  <td>{{::c.phoneNumber}} <span class="pull-right"> &nbsp; &nbsp;<span ng-show="!!c.emailAddress" class=""><i class="ion-ios-email-outline font-size-17 color-red" title="{{c.emailAddress}}"></i></span></span></td>
+                  <td>{{::c.location}}</td>
+
+                  <td>
+                      <p class="font-size-11" ng-switch on="c.isSupplier">
+                          <span ng-switch-when="true"><b>Supplier</b></span>
+                          <span ng-switch-when="false"><b>Buyer</b></span>
+
+                      </p>
+                  </td>
+                  <td>{{::c.priceLevel}}</td>
+                  <td>
+                      <span ng-show="c.contacts.length>0">{{c.contacts.length}} Contact(s)</span>
+                      @*                    <span ng-show="c.contacts.length<1">No Contact</span>*@
+                  </td>
+                  <td>{{::c.dateCreated|date:medium}}</td>
+              </tr>
+          </table>
+      </div>
+
+      </div>
+    </page-content>
+</asom-base-container>
+
+

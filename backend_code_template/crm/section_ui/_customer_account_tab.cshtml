@@ -1,0 +1,31 @@
+﻿@using asom.apps.Effectiv.core.model.org
+@{
+
+var appSetting = OrganizationInfo.GetSettings();
+string currency  =  appSetting.CurrencySymbol ;
+}
+<div class="">
+  <div class="" ng-if="currentCustomer.debtAccount">
+    <p class="font-size-20 text-muted divider pad10">
+      Debt Record
+      <span  class="color-red font-size-14">{{::currentCustomer.debtAccount.name}} : @currency {{::currentCustomer.debtAccount.currentBalance | money}}</span>
+      <small class="font-size-10 color-blue bold" ng-if="currentCustomer.debtAccount.currentBalanceAllChannels>currentCustomer.debtAccount.currentBalance "> Debts from other Channels: @currency {{::(currentCustomer.debtAccount.currentBalanceAllChannels-currentCustomer.debtAccount.currentBalance) | money}}</small>
+
+
+
+      <span class="pull-right"><button class="ui-button ui-button-xs ui-button-flat-primary" ng-click="activateNewTransaction()">Add New Debt</button></span>
+
+    </p>
+    <asom-account-ledger css-class="bg-primary" account="currentCustomer.debtAccount.id" currency="@currency"></asom-account-ledger>
+  </div>
+  <div class="margin-t-10" ng-if="currentCustomer.creditAccount">
+    <p class="font-size-20 text-muted divider pad10">
+      What We Owe
+      <span  class="color-blue font-size-14">{{currentCustomer.creditAccount.name}} : @currency {{currentCustomer.creditAccount.currentBalance | money}}</span>
+      <small class="font-size-10 color-blue bold" ng-if="currentCustomer.creditAccount.currentBalanceAllChannels>currentCustomer.creditAccount.currentBalance "> Credit we Owe from other Channels: @currency {{::(currentCustomer.creditAccount.currentBalanceAllChannels-currentCustomer.creditAccount.currentBalance) | money}}</small>
+      <span class="pull-right"><button class="ui-button ui-button-xs ui-button-flat-danger" ng-click="activateNewTransaction()">Add New Credit</button></span>
+
+    </p>
+    <asom-account-ledger css-class="bg-danger" account="currentCustomer.creditAccount.id" currency="@currency"></asom-account-ledger>
+  </div>
+</div>

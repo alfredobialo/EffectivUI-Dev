@@ -1,0 +1,31 @@
+﻿ <div class="row" ng-show="item.isEditMode">
+        <div class="col-sm-6">
+            <div class="pad10">
+                <span class="font-size-16 theme-caption-color">Other Details for {{::item.name}}</span>
+                <br /><br />
+                <div class="row">
+                    <div class="col-sm-3">Created On</div>
+                    <div class="col-sm-9">
+                        <span>{{::item.dateCreated | date:'medium'}} By {{::item.createdBy}}</span><br>
+                        <span>Created at Channel ID : {{::item.createdAtChannel}}</span>
+                    </div>
+                </div>
+                <br/>
+                <br />
+                <div class="row">
+                    <div class="col-sm-3">Updated On</div>
+                    <div class="col-sm-9">
+                        <span>
+                            {{ ::item.dateUpdated | date:'medium'}} By {{::item.updatedBy}}
+                        </span>
+                        <br>
+                        <span> Updated At Channel Id :{{::item.updatedAtChannel}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+
+        </div>
+    </div>
+

@@ -1,0 +1,73 @@
+﻿@using asom.apps.Effectiv.core.model.authentication
+@using asom.apps.Effectiv.core.model.org
+@{
+    var appSetting = OrganizationInfo.GetSettings();
+    var id = new IdentityStore();
+    bool
+        canEditCost = id.HasAuthority(AppPermissions.INVENTORY_UI_EDIT_ITEM_COST);
+
+
+}
+
+<div class="pad10">
+    <table class="table font-size-11">
+        <tr>
+            <th>Desc.</th>
+            @if (canEditCost)
+            {
+                <th>Cost Price.</th>
+            }
+            <th>Retail Price</th>
+            <th>Whole. Price</th>
+            <th>Distri. Price</th>
+            <th  ng-if="!item.isServiceItem">Reorder Pt</th>
+            <th>U.Measr.</th>
+            <th>Stock.</th>
+            <th></th>
+        </tr>
+        <tr ng-repeat="s in item.storageType" ng-class="{'bg-accent-color color-white' : storageType.id == s.id && s.isEditMode}">
+            <td>
+                <span ng-show="s.hasBarcode" uib-tooltip="Barcode : {{s.barcode}}" class="font-size-15 ion-ios-barcode"> &nbsp;</span>
+                <span ng-if="!uiMode.isDisabled">
+                    <a href="" ng-click="editStorageItem(s)"
+                       class=""><span>{{s.description}}</span></a>
+
+
+                    <a href=""
+                       ng-hide=""
+                       ng-click="editStorageItem(s)"
+                       class="ui-button ui-button-flat-default ui-button-xxs">
+                        <i class="ion-edit"></i>
+                    </a>
+                </span>
+                <span ng-if="uiMode.isDisabled">
+                    {{s.description}}
+
+                </span>
+
+
+            </td>
+            @if (canEditCost)
+            {
+                <td>@appSetting.CurrencySymbol{{s.costPrice | number}}</td>
+            }
+            <td>@appSetting.CurrencySymbol{{s.retailPrice | number}}</td>
+            <td>@appSetting.CurrencySymbol{{s.wholesalePrice | number}}</td>
+            <td>@appSetting.CurrencySymbol{{s.distributorPrice | number}}</td>
+            <td ng-if="!item.isServiceItem">{{s.reorderPoint || number}}</td>
+            <td>{{s.unitOfMeasure}}</td>
+            <td>{{s.unitInStock | number}}</td>
+            <td>
+                <a href=""
+                   ng-hide="uiMode.isDisabled"
+                   ng-click="deleteStorageItem(s)"
+                   uib-tooltip="Delete this Storage Type" class="ui-button ui-button-flat-default ui-button-sm">
+                    <i class="ion-ios-trash"></i>
+                </a>
+
+
+            </td>
+        </tr>
+    </table>
+
+</div>

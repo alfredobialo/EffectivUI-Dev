@@ -1,0 +1,121 @@
+﻿@using asom.apps.Effectiv.core.model.org
+@{
+    var appSetting = OrganizationInfo.GetSettings();
+}
+
+<div class=" min-h100 bg-success" asom-toolbar offset-to-element-id="app-main-menu">
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="pad10">
+                <p class="font-size-14">To edit or view details of an item, click on the Item Name</p>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="pad10 ui-bg-color">
+                <form novalidate name="frmCategory">
+                    <input type="text"
+                           name="txtCategory"
+                           placeholder="Search Inventory : eg Smartphones"
+                           ng-model="criteria.queryString"
+                           class="ui-input "
+                           @*                           uib-typeahead="c.name for c in categories | filter:$viewValue | limitTo:5"*@ />
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="bg-white-gradient pad10">
+        <div class="row">
+            <div class="col-sm-3">
+                <p class="">
+                    <button ui-sref="^.add-new-item-state({mode:'add'})" class="ui-button ui-button-primary ui-button-sm">Create Item</button>
+                </p>
+
+
+            </div>
+            <div class="col-sm-7 text-right">
+                <asom-data-pager
+                    show-as-page-numbers="true"
+                    on-page-click="gotoPage(index)"
+                    pager-source="criteria"></asom-data-pager>
+                <span class=""><button class="ui-button ui-button-sm ui-button-flat-default"
+                                       ng-class="{'bg-accent-color color-white-forced bold':tableView}"
+                                       uib-tooltip="Table View"
+                                       ng-click="setTableView()"> <i class="ion-ios-grid-view"> </i> </button></span>
+                <span class=""><button class="ui-button ui-button-sm ui-button-flat-default"
+                                       uib-tooltip="Card View"
+                                        ng-class="{'bg-accent-color color-white-forced bold':!tableView}"
+                                       ng-click="setCardView()"> <i class="ion-card"> </i> </button></span>
+                <span class=""><button class="ui-button ui-button-flat-primary ui-button-sm" ng-disabled="loading" ng-click="getHttpItems($event)"> <i class="ion-refresh"> </i> Refresh</button></span>
+            </div>
+        </div>
+
+    </div>
+    <md-progress-linear ng-show="loading" md-mode="indeterminate"></md-progress-linear>
+
+</div>
+
+<div class=" clearfix">
+
+    <p class="font-size-18 text-muted text-center pad15" ng-show="items.length < 1">No Inventory Item Found!</p>
+
+
+</div>
+<div class="pad20 " >
+
+    <table class="table bg-white">
+        <tr class="bg-accent-color">
+            <th width="30%">Name</th>
+            <th width="60%">Description</th>
+            <th></th>
+        </tr>
+        <tr ng-repeat="i in items | filter:criteria.queryString" class="hover " ng-class="{'danger-alert ':!i.isActive}" >
+            <td>
+                <a class="font-size-17 pad10 theme-caption-color bold" ui-sref="^.add-new-item-state({mode : 1, id : i.id})">
+                    {{::i.name}}
+                </a>
+                <br/>
+                <span class="text-muted ">Code : {{::i.id}} </span><br />
+                <span class="theme-caption-color bold">Category : {{::i.categoryId}}  / {{::i.itemType}} </span>
+                <br/>
+                <span class="text-muted font-size-11">
+                    Created By: <i class="ion-ios-person-outline font-size-13">&nbsp; {{::i.createdBy}}</i>  &nbsp; <span ng-show="!!i.createdAtChannel"><b>At</b> {{i.createdAtChannel}}</span>
+                </span>
+                <br/>
+
+            </td>
+            <td>
+                WHY is this Template HERE
+                <span>{{::i.description}}</span>
+                <br/>
+                <table class="table table-bordered   table-condensed font-size-12" ng-show="i.storageType.length >0">
+                    <tr class="bg-success">
+                        <th ng-if="!i.isServiceItem">Stock</th>
+                        <th>Desc.</th>
+                        <th>R.Price</th>
+                        <th>Whols.Price</th>
+                        <th>Distrb.Price</th>
+                    </tr>
+
+                    <tr ng-repeat="st in i.storageType">
+                        <td ng-if="!i.isServiceItem" ng-class="{'bg-danger':st.unitInStock <= st.reorderPoint }"><span class="bold">{{::st.unitInStock | number}}</span> {{::st.unitOfMeasure}}</td>
+                        <td>
+                            <span ng-show="st.hasBarcode" uib-tooltip="Barcode : {{st.barcode}}" class="font-size-15 ion-ios-barcode"> &nbsp;</span>
+                            {{::st.description}}</td>
+                        <td>@appSetting.CurrencySymbol{{::st.retailPrice | number}}</td>
+                        <td>@appSetting.CurrencySymbol{{::st.wholesalePrice | number}}</td>
+                        <td>@appSetting.CurrencySymbol{{::st.distributorPrice | number}}</td>
+                    </tr>
+                </table>
+                <p class="text-danger" ng-show="i.storageType.length <1"> No Storage Type defined</p>
+            </td>
+            <td>
+                <img ng-src="{{::i.pictureUrl}}" alt="{{::i.name}}" width="70" class="">
+            </td>
+        </tr>
+    </table>
+
+
+
+</div>

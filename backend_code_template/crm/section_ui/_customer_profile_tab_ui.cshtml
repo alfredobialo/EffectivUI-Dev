@@ -1,0 +1,51 @@
+﻿
+
+<div class="margin-t-20 ">
+    <form name="FrmTabsContainer" novalidate>
+        <uib-tabset class="">
+
+          <uib-tab heading="Other Details">
+          <div class="pad20 min-h200">
+            @Html.Partial("ui/_partials/crm/section_ui/_basic_customer_options")
+          </div>
+
+        </uib-tab>
+          <uib-tab heading="Accounting">
+          <div class="pad20 min-h200">
+            @Html.Partial("ui/_partials/crm/section_ui/_customer_account_tab")
+          </div>
+        </uib-tab>
+          <uib-tab heading="Transactions">
+            <div class="pad20 min-h200">
+              <div class="pad5" >
+                <p class="divider theme-caption-color font-size-17">Transaction History   <asom-date-range-picker date-source="salesHistoryCriteria"></asom-date-range-picker> </p>
+                @Html.Partial("ui/_partials/crm/_customer_sales_history_list")
+              </div>
+
+            </div>
+          </uib-tab>
+
+
+            <uib-tab heading="Contacts">
+                <div class="pad20 min-h200">
+                    @Html.Partial("ui/_partials/crm/section_ui/_customer_contact_tab")
+
+                </div>
+            </uib-tab>
+
+          <uib-tab heading="Meetings / Events">
+            <div class="pad20 min-h200">
+              @Html.Partial("ui/_partials/crm/section_ui/_customer_meetings_tab")
+            </div>
+          </uib-tab>
+            <uib-tab heading="Documents">
+                <div class="pad20 min-h200">
+                  @Html.Partial("ui/_partials/crm/section_ui/_customer_document_tab")
+                </div>
+            </uib-tab>
+
+
+        </uib-tabset>
+    </form>
+
+</div>
